@@ -1,0 +1,17 @@
+{
+  "name": "c-util",
+  "version": "0.0.1",
+  "author": "Matthew Zito (goldmund)",
+  "repo": "MatthewZito/c-util",
+  "license": "MIT",
+  "description": "",
+  "keywords": [
+
+  ],
+  "src": [
+    "src/c-util.h"
+  ],
+  "development": {
+    "thlorenz/tap.c": "*"
+  }
+}

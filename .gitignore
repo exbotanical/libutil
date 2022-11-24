@@ -1,0 +1,4 @@
+*.so
+*.o
+c-util
+main
