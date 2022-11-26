@@ -2,7 +2,7 @@
   "name": "libutil",
   "version": "0.0.1",
   "author": "Matthew Zito",
-  "repo": "MatthewZito/libutil",
+  "repo": "exbotanical/libutil",
   "license": "MIT",
   "description": "A library of useful C utilities",
   "keywords": [
