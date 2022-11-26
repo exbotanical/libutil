@@ -12,7 +12,7 @@ all:
 	$(CC) $(CFLAGS) $(SRC) $(DEPS) $(LDFLAGS) $(BIN)
 
 clean:
-	rm -f $(SRC:.c=.o) $(TARGET) $(BIN) main*
+	rm -f $(SRC:.c=.o) $(BIN)
 
 test:
 	./scripts/test.bash
