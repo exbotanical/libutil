@@ -1,4 +1,4 @@
-# c-util
+# libutil
 
 ## Dynamic Linking
 

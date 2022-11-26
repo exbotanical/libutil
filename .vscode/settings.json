@@ -1,9 +1,0 @@
-{
-  "files.associations": {
-    "*.html": "html",
-    "*.tsx": "typescriptreact",
-    "*.ts": "typescript",
-    "tap.h": "c",
-    "array": "c"
-  }
-}

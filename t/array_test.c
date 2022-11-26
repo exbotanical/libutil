@@ -1,8 +1,8 @@
-#include "../src/array.h"
+#include "array.h"
 
 #include <stdlib.h>
 
-#include "../deps/tap.c/tap.h"
+#include "tap.c/tap.h"
 
 Array *make_test_array() {
   Array *array = array_init();

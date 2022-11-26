@@ -1,15 +1,19 @@
 {
-  "name": "c-util",
+  "name": "libutil",
   "version": "0.0.1",
-  "author": "Matthew Zito (goldmund)",
-  "repo": "MatthewZito/c-util",
+  "author": "Matthew Zito",
+  "repo": "MatthewZito/libutil",
   "license": "MIT",
-  "description": "",
+  "description": "A library of useful C utilities",
   "keywords": [
-
+    "array",
+    "buffer",
+    "formatting",
+    "utilities",
+    "helpers"
   ],
   "src": [
-    "src/c-util.h"
+    "src/*"
   ],
   "development": {
     "thlorenz/tap.c": "*"
