@@ -4,7 +4,7 @@
   "author": "Matthew Zito",
   "repo": "exbotanical/libutil",
   "license": "MIT",
-  "description": "A library of useful C utilities",
+  "description": "A library of useful C utilities with JavaScript-like array, buffer, and string APIs",
   "keywords": [
     "array",
     "buffer",
@@ -13,7 +13,9 @@
     "helpers"
   ],
   "src": [
-    "src/*"
+    "src/array.h",
+    "src/buffer.h",
+    "src/fmt.h"
   ],
   "development": {
     "thlorenz/tap.c": "*"

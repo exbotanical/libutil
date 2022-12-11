@@ -7,7 +7,7 @@
 Buffer *buffer_init(const char *init) {
   Buffer *buf = malloc(sizeof(Buffer));
   if (!buf) {
-    buffer_free(buf);
+    free(buf);
     return NULL;
   }
 
@@ -30,7 +30,7 @@ bool buffer_append(Buffer *buf, const char *s) {
   // get mem sizeof current str + sizeof append str
   char *next = realloc(buf->state, buf->len + len);
   if (!next) {
-    buffer_free(next);
+    free(next);
     return false;
   }
 
