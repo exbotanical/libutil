@@ -29,13 +29,13 @@ bool buffer_append(Buffer *buf, const char *s) {
   int len = strlen(s);
 
   // get mem sizeof current str + sizeof append str
-  char *next = realloc(buf->state, buf->len + len);
+  char *next = realloc(buf->state, buf->len + len + 1);
   if (!next) {
     free(next);
     return false;
   }
 
-  memcpy(&next[buf->len], s, len);
+  memcpy(&next[buf->len], s, len + 1);
   buf->state = next;
   buf->len += len;
 
@@ -56,20 +56,7 @@ bool buffer_append_with(Buffer *buf, const char *s, int len) {
   memset(sc, '\0', sizeof(sc));
   strncpy(sc, s, adjusted_len);
 
-  int newlen = strlen(sc);
-
-  // Get mem sizeof current str + sizeof append str
-  char *next = realloc(buf->state, buf->len + newlen);
-  if (!next) {
-    free(next);
-    return false;
-  }
-
-  memcpy(&next[buf->len], sc, newlen);
-  buf->state = next;
-  buf->len += newlen;
-
-  return true;
+  return buffer_append(buf, sc);
 }
 
 Buffer *buffer_concat(Buffer *buf_a, Buffer *buf_b) {

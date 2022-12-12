@@ -10,6 +10,8 @@ void test_buffer_init() {
 
   is(buf->state, NULL, "newly initialized buffer's state is NULL");
   ok(buf->len == 0, "newly initialized buffer's length is 0");
+
+  buffer_free(buf);
 }
 
 void test_buffer_init_with_initial() {
@@ -22,6 +24,8 @@ void test_buffer_init_with_initial() {
      test_str);
   ok(buf->len == test_str_len, "newly initialized buffer's length is %d",
      test_str_len);
+
+  buffer_free(buf);
 }
 
 void test_buffer_append() {
@@ -54,7 +58,7 @@ void test_buffer_append_with() {
   int expected_len = strlen(expected);
   ok(buf->len == expected_len, "buffer's length is %d", expected_len);
 
-  // buffer_free(buf);
+  buffer_free(buf);
 }
 
 void test_buffer_concat() {
@@ -62,15 +66,13 @@ void test_buffer_concat() {
   Buffer *buf_b = buffer_init("string");
   Buffer *buf_c = buffer_concat(buf_a, buf_b);
 
-  printf("state a %s len a %d state b %s len b %d state c %s c len %d\n",
-         buf_a->state, strlen(buf_a->state), buf_b->state, strlen(buf_b->state),
-         buf_c->state, strlen(buf_c->state));
-  // is(buf_c->state, "teststring", "concatenates the two buffers' states");
-  // ok(buf_c->len == strlen("teststring"), "has the correct length");
+  is(buf_c->state, "teststring", "concatenates the two buffers' states");
+  int expected_len = strlen("teststring");
+  ok(buf_c->len == expected_len, "buffer's length is %d", expected_len);
 
-  // buffer_free(buf_a);
-  // buffer_free(buf_b);
-  // buffer_free(buf_c);
+  buffer_free(buf_a);
+  buffer_free(buf_b);
+  buffer_free(buf_c);
 }
 
 void test_buffer_concat_on_null() {
@@ -87,25 +89,23 @@ void test_buffer_concat_on_null() {
 
 void test_buffer_free() {
   Buffer *buf = buffer_init(NULL);
-
   lives_ok({ buffer_free(buf); }, "frees the buffer's heap memory");
 }
 
 void test_buffer_free_nonnull() {
   Buffer *buf = buffer_init("test");
-
   lives_ok({ buffer_free(buf); }, "frees the buffer's memory");
 }
 
 int main(int argc, char *argv[]) {
-  // plan(11);
+  plan(13);
 
   test_buffer_free();
   test_buffer_free_nonnull();
   test_buffer_init();
   test_buffer_init_with_initial();
   test_buffer_append();
-  // test_buffer_append_with();
+  test_buffer_append_with();
   test_buffer_concat();
   test_buffer_concat_on_null();
 

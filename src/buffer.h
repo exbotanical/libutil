@@ -27,6 +27,16 @@ Buffer *buffer_init(const char *init);
  */
 bool buffer_append(Buffer *buf, const char *s);
 
+/**
+ * @brief Appends a string to a given buffer `buf`, reallocating the required
+ * memory
+ *
+ * @param buf the buffer to which `s` will be appended
+ * @param s char pointer to be appended to the buffer
+ * @param len the length at which to truncate the given string `s`
+ */
+bool buffer_append_with(Buffer *buf, const char *s, int len);
+
 Buffer *buffer_concat(Buffer *buf_a, Buffer *buf_b);
 
 /**
