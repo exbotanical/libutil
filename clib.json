@@ -16,9 +16,11 @@
     "src/array.h",
     "src/buffer.h",
     "src/fmt.h",
+    "src/str.h",
     "src/array.c",
     "src/buffer.c",
-    "src/fmt.c"
+    "src/fmt.c",
+    "src/str.c"
   ],
   "development": {
     "thlorenz/tap.c": "*"

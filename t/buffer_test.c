@@ -67,7 +67,7 @@ void test_buffer_free() {
 void test_buffer_free_nonnull() {
   Buffer *buf = buffer_init("test");
 
-  lives_ok({ buffer_free(buf); });
+  lives_ok({ buffer_free(buf); }, "frees the buffer's memory");
 }
 
 int main(int argc, char *argv[]) {
