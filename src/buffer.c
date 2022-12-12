@@ -13,6 +13,7 @@ Buffer *buffer_init(const char *init) {
 
   buf->state = NULL;
   buf->len = 0;
+
   if (init != NULL) {
     buffer_append(buf, init);
   }
@@ -37,6 +38,36 @@ bool buffer_append(Buffer *buf, const char *s) {
   memcpy(&next[buf->len], s, len);
   buf->state = next;
   buf->len += len;
+
+  return true;
+}
+
+bool buffer_append_with(Buffer *buf, const char *s, int len) {
+  if (!s) {
+    return false;
+  }
+
+  int adjusted_len = strlen(s);
+  if (len > 0 && len < adjusted_len) {
+    adjusted_len = len;
+  }
+
+  char *sc = malloc(sizeof(char) * (adjusted_len + 1));
+  memset(sc, '\0', sizeof(sc));
+  strncpy(sc, s, adjusted_len);
+
+  int newlen = strlen(sc);
+
+  // Get mem sizeof current str + sizeof append str
+  char *next = realloc(buf->state, buf->len + newlen);
+  if (!next) {
+    free(next);
+    return false;
+  }
+
+  memcpy(&next[buf->len], sc, newlen);
+  buf->state = next;
+  buf->len += newlen;
 
   return true;
 }
