@@ -43,20 +43,16 @@ bool buffer_append(Buffer *buf, const char *s) {
 }
 
 bool buffer_append_with(Buffer *buf, const char *s, int len) {
-  if (!s) {
+  char *next = realloc(buf->state, buf->len + len);
+  if (!next) {
     return false;
   }
 
-  int adjusted_len = strlen(s);
-  if (len > 0 && len < adjusted_len) {
-    adjusted_len = len;
-  }
+  memcpy(&next[buf->len], s, len);
+  buf->state = next;
+  buf->len += len;
 
-  char *sc = malloc(sizeof(char) * (adjusted_len + 1));
-  memset(sc, '\0', sizeof(sc));
-  strncpy(sc, s, adjusted_len);
-
-  return buffer_append(buf, sc);
+  return true;
 }
 
 Buffer *buffer_concat(Buffer *buf_a, Buffer *buf_b) {
