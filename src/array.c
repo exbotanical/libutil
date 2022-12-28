@@ -22,14 +22,25 @@ Array *array_init() {
   return array;
 }
 
-bool array_includes(Array *array, ComparatorFunction *comparator) {
+bool array_includes(Array *array, ComparatorFunction *comparator,
+                    void *compare_to) {
   for (unsigned int i = 0; i < array->len; i++) {
-    if (comparator(array->state[i])) {
+    if (comparator(array->state[i], compare_to)) {
       return true;
     }
   }
 
   return false;
+}
+
+int array_find(Array *array, ComparatorFunction *comparator, void *compare_to) {
+  for (unsigned int i = 0; i < array->len; i++) {
+    if (comparator(array->state[i], compare_to)) {
+      return i;
+    }
+  }
+
+  return -1;
 }
 
 bool array_push(Array *array, void *el) {
@@ -82,11 +93,12 @@ Array *array_map(Array *array, CallbackFunction *callback) {
   return ret;
 }
 
-Array *array_filter(Array *array, PredicateFunction *predicate) {
+Array *array_filter(Array *array, PredicateFunction *predicate,
+                    void *compare_to) {
   Array *ret = array_init();
   for (unsigned int i = 0; i < array->len; i++) {
     void *el = array->state[i];
-    if (predicate(el, i, array)) {
+    if (predicate(el, i, array, compare_to)) {
       array_push(ret, el);
     }
   }

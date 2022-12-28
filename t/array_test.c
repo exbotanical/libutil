@@ -23,17 +23,25 @@ void test_array_init() {
   is(array->state, "", "initializes state to empty");
 }
 
-bool *will_include(void *el) { return el == 'z'; }
-
-bool *wont_include(void *el) { return el == 'n'; }
+bool *include(void *el, void *compare_to) { return el == compare_to; }
 
 void test_array_includes() {
   Array *array = make_test_array();
 
-  cmp_ok(array_includes(array, will_include), "==", true,
+  cmp_ok(array_includes(array, include, 'z'), "==", true,
          "returns true when it includes the element");
-  cmp_ok(array_includes(array, wont_include), "==", false,
+  cmp_ok(array_includes(array, include, 'n'), "==", false,
          "returns false when it does not include the element");
+}
+
+bool *find(void *el, void *compare_to) { return el == compare_to; }
+
+void test_array_find() {
+  Array *array = make_test_array();
+  cmp_ok((int)array_find(array, find, 'z'), "==", 2,
+         "returns index when it finds the element");
+  cmp_ok(array_find(array, find, 'n'), "==", -1,
+         "returns -1 when it does not find the element");
 }
 
 void test_array_push() {
@@ -108,11 +116,13 @@ void test_array_map() {
   }
 }
 
-bool *filter(void *el, int index, Array *array) { return el > (int)'A'; }
+bool *filter(void *el, int index, Array *array, void *compare_to) {
+  return el > compare_to;
+}
 void test_array_filter() {
   Array *array = make_test_array();
 
-  Array *transformed = array_filter(array, filter);
+  Array *transformed = array_filter(array, filter, 'A');
   cmp_ok(transformed->len, "==", 3, "has a length of filtered elements only");
   for (int i = 0; i < array->len; i++) {
     void *el = array->state[i];
@@ -125,7 +135,7 @@ void test_array_filter() {
 }
 
 int main() {
-  plan(33);
+  plan(35);
 
   test_array_init();
   test_array_includes();
@@ -135,6 +145,7 @@ int main() {
   test_array_slice();
   test_array_map();
   test_array_filter();
+  test_array_find();
 
   done_testing();
 }
