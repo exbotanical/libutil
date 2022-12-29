@@ -100,6 +100,26 @@ void test_array_slice() {
   }
 }
 
+void test_array_remove() {
+  Array *array = make_test_array();
+
+  cmp_ok(array_remove(array, 2), "==", true,
+         "returns true when the element was removed");
+
+  char values[] = {'x', 'y', '1', '2', '3'};
+  for (int i = 0; i < array->len; i++) {
+    cmp_ok(array->state[i], "==", values[i],
+           "contains all elements except for removed");
+  }
+}
+
+void test_array_remove_not_found() {
+  Array *array = make_test_array();
+
+  cmp_ok(array_remove(array, 12), "==", false,
+         "returns false when the element was not removed");
+}
+
 #define MAPPER_INC 10
 void *mapper(void *el, int index, Array *array) { return el + MAPPER_INC; }
 
@@ -135,7 +155,7 @@ void test_array_filter() {
 }
 
 int main() {
-  plan(35);
+  plan(42);
 
   test_array_init();
   test_array_includes();
@@ -143,6 +163,8 @@ int main() {
   test_array_pop();
   test_array_pop_empty();
   test_array_slice();
+  test_array_remove();
+  test_array_remove_not_found();
   test_array_map();
   test_array_filter();
   test_array_find();

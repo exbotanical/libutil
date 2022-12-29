@@ -84,6 +84,21 @@ Array *array_slice(Array *array, int start, int end) {
   return slice;
 }
 
+bool *array_remove(Array *array, int idx) {
+  if (array->len < idx) {
+    return false;
+  }
+
+  for (int i = 0; i < array->len - 1; i++) {
+    if (i >= idx) {
+      array->state[i] = array->state[i + 1];
+    }
+  }
+
+  array->len--;
+  return true;
+}
+
 Array *array_map(Array *array, CallbackFunction *callback) {
   Array *ret = array_init();
   for (unsigned int i = 0; i < array->len; i++) {

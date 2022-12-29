@@ -28,6 +28,8 @@ void *array_pop(Array *array);
 
 Array *array_slice(Array *array, int start, int end);
 
+bool *array_remove(Array *array, int idx);
+
 Array *array_map(Array *array, CallbackFunction *callback);
 
 Array *array_filter(Array *array, PredicateFunction *predicate,
