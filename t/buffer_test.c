@@ -1,9 +1,9 @@
-#include "buffer.h"
+#include "../src/buffer.h"
 
 #include <stdio.h>
 #include <string.h>
 
-#include "tap.c/tap.h"
+#include "../deps/tap.c/tap.h"
 
 void test_buffer_init() {
   Buffer *buf = buffer_init(NULL);

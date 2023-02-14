@@ -6,15 +6,15 @@
 
 typedef struct {
   void **state;
-  size_t len;
+  unsigned int len;
 } array_t;
 
 typedef struct array *Array; // TODO: opaque pointers
 
-typedef void *CallbackFunction(void *el, int index, Array *array);
-typedef bool PredicateFunction(void *el, int index, Array *array,
+typedef void *CallbackFunction(void *el, unsigned int index, Array *array);
+typedef bool PredicateFunction(void *el, unsigned int index, Array *array,
                                void *compare_to);
-typedef bool ReducerFunction(Array *array, void *el, int index);
+typedef bool ReducerFunction(Array *array, void *el, unsigned int index);
 typedef bool ComparatorFunction(void *el, void *compare_to);
 
 Array *array_init();
@@ -30,9 +30,9 @@ void *array_pop(Array *array);
 
 void *array_shift(Array *array);
 
-Array *array_slice(Array *array, int start, int end);
+Array *array_slice(Array *array, unsigned int start, int end);
 
-bool array_remove(Array *array, int idx);
+bool array_remove(Array *array, unsigned int idx);
 
 Array *array_map(Array *array, CallbackFunction *callback);
 

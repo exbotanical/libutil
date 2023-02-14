@@ -1,6 +1,6 @@
-#include "str.h"
+#include "../src/str.h"
 
-#include "tap.c/tap.h"
+#include "../deps/tap.c/tap.h"
 
 void test_str_truncate() {
   char *string = "hello world";

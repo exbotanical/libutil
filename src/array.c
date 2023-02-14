@@ -4,7 +4,8 @@
 #include <malloc.h>
 #include <stdlib.h>
 
-int array_size(Array *array) { return ((array_t *)array)->len; }
+// TODO: expose
+unsigned int array_size(Array *array) { return ((array_t *)array)->len; }
 
 Array *array_init() {
   Array *array = malloc(sizeof(Array));
@@ -72,10 +73,10 @@ bool array_push(Array *array, void *el) {
 void *array_pop(Array *array) {
   array_t *internal = (array_t *)array;
 
-  int len = internal->len;
+  unsigned int len = internal->len;
 
   if (len > 0) {
-    int next_len = len - 1;
+    unsigned int next_len = len - 1;
 
     void *el = internal->state[next_len];
     internal->state[next_len] = NULL;
@@ -97,7 +98,7 @@ void *array_shift(Array *array) {
   void *el = internal->state[0];
   Array *new = array_init();
 
-  for (int i = 1; i < internal->len; i++) {
+  for (unsigned int i = 1; i < internal->len; i++) {
     array_push(new, internal->state[i]);
   }
 
@@ -106,27 +107,28 @@ void *array_shift(Array *array) {
   return el;
 }
 
-Array *array_slice(Array *array, int start, int end) {
+Array *array_slice(Array *array, unsigned start, int end) {
   array_t *internal = (array_t *)array;
   Array *slice = array_init();
 
-  int normalized_end = end == -1 ? (int)internal->len : end;
-  for (int i = start; i < normalized_end; i++) {
+  // TODO: test -1
+  unsigned int normalized_end = end == -1 ? (int)internal->len : end;
+  for (unsigned int i = start; i < normalized_end; i++) {
     array_push(slice, internal->state[i]);
   }
 
   return slice;
 }
 
-bool array_remove(Array *array, int idx) {
+bool array_remove(Array *array, unsigned int index) {
   array_t *internal = (array_t *)array;
 
-  if (internal->len < idx) {
+  if (internal->len < index) {
     return false;
   }
 
-  for (int i = 0; i < internal->len - 1; i++) {
-    if (i >= idx) {
+  for (unsigned int i = 0; i < internal->len - 1; i++) {
+    if (i >= index) {
       internal->state[i] = internal->state[i + 1];
     }
   }
