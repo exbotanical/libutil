@@ -8,7 +8,7 @@
  */
 typedef struct buffer {
   char *state;
-  int len;
+  unsigned int len;
 } Buffer;
 
 /**
@@ -35,7 +35,7 @@ bool buffer_append(Buffer *buf, const char *s);
  * @param s char pointer to be appended to the buffer
  * @param len the length at which to truncate the given string `s`
  */
-bool buffer_append_with(Buffer *buf, const char *s, int len);
+bool buffer_append_with(Buffer *buf, const char *s, unsigned int len);
 
 Buffer *buffer_concat(Buffer *buf_a, Buffer *buf_b);
 

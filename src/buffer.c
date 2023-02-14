@@ -26,7 +26,7 @@ bool buffer_append(Buffer *buf, const char *s) {
     return false;
   }
 
-  int len = strlen(s);
+  unsigned int len = strlen(s);
 
   // get mem sizeof current str + sizeof append str
   char *next = realloc(buf->state, buf->len + len + 1);
@@ -42,7 +42,7 @@ bool buffer_append(Buffer *buf, const char *s) {
   return true;
 }
 
-bool buffer_append_with(Buffer *buf, const char *s, int len) {
+bool buffer_append_with(Buffer *buf, const char *s, unsigned int len) {
   char *next = realloc(buf->state, buf->len + len);
   if (!next) {
     return false;
