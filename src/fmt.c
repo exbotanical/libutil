@@ -10,7 +10,7 @@ char *fmt_str(char *fmt, ...) {
   va_copy(args_cp, args);
 
   // Pass length of zero first to determine number of bytes needed
-  int n = vsnprintf(NULL, 0, fmt, args) + 1;
+  unsigned int n = vsnprintf(NULL, 0, fmt, args) + 1;
   char *buf = malloc(n);
   if (!buf) {
     return NULL;
