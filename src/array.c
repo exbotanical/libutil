@@ -4,6 +4,8 @@
 #include <malloc.h>
 #include <stdlib.h>
 
+int array_size(Array *array) { return ((array_t *)array)->len; }
+
 Array *array_init() {
   Array *array = malloc(sizeof(Array));
   if (!array) {
@@ -11,21 +13,25 @@ Array *array_init() {
     return NULL;
   }
 
-  array->state = malloc(sizeof(void *));
-  if (!array->state) {
+  array_t *internal = (array_t *)array;
+
+  internal->state = malloc(sizeof(void *));
+  if (!internal->state) {
     errno = ENOMEM;
     return NULL;
   }
 
-  array->len = 0;
+  internal->len = 0;
 
   return array;
 }
 
 bool array_includes(Array *array, ComparatorFunction *comparator,
                     void *compare_to) {
-  for (unsigned int i = 0; i < array->len; i++) {
-    if (comparator(array->state[i], compare_to)) {
+  array_t *internal = (array_t *)array;
+
+  for (unsigned int i = 0; i < internal->len; i++) {
+    if (comparator(internal->state[i], compare_to)) {
       return true;
     }
   }
@@ -34,8 +40,10 @@ bool array_includes(Array *array, ComparatorFunction *comparator,
 }
 
 int array_find(Array *array, ComparatorFunction *comparator, void *compare_to) {
-  for (unsigned int i = 0; i < array->len; i++) {
-    if (comparator(array->state[i], compare_to)) {
+  array_t *internal = (array_t *)array;
+
+  for (unsigned int i = 0; i < internal->len; i++) {
+    if (comparator(internal->state[i], compare_to)) {
       return i;
     }
   }
@@ -44,7 +52,10 @@ int array_find(Array *array, ComparatorFunction *comparator, void *compare_to) {
 }
 
 bool array_push(Array *array, void *el) {
-  void **next_state = realloc(array->state, (array->len + 1) * sizeof(void *));
+  array_t *internal = (array_t *)array;
+
+  void **next_state =
+      realloc(internal->state, (internal->len + 1) * sizeof(void *));
   if (!next_state) {
     free(next_state);
     errno = ENOMEM;
@@ -52,21 +63,23 @@ bool array_push(Array *array, void *el) {
     return false;
   }
 
-  array->state = next_state;
-  array->state[array->len++] = el;
+  internal->state = next_state;
+  internal->state[internal->len++] = el;
 
   return true;
 }
 
 void *array_pop(Array *array) {
-  int len = array->len;
+  array_t *internal = (array_t *)array;
+
+  int len = internal->len;
 
   if (len > 0) {
     int next_len = len - 1;
 
-    void *el = array->state[next_len];
-    array->state[next_len] = NULL;
-    array->len = next_len;
+    void *el = internal->state[next_len];
+    internal->state[next_len] = NULL;
+    internal->len = next_len;
 
     return el;
   }
@@ -74,35 +87,60 @@ void *array_pop(Array *array) {
   return NULL;
 }
 
+void *array_shift(Array *array) {
+  array_t *internal = (array_t *)array;
+
+  if (internal->len == 0) {
+    return false;
+  }
+
+  void *el = internal->state[0];
+  Array *new = array_init();
+
+  for (int i = 1; i < internal->len; i++) {
+    array_push(new, internal->state[i]);
+  }
+
+  internal->len--;
+  *array = *new;
+  return el;
+}
+
 Array *array_slice(Array *array, int start, int end) {
+  array_t *internal = (array_t *)array;
   Array *slice = array_init();
-  int normalized_end = end == -1 ? (int)array->len : end;
+
+  int normalized_end = end == -1 ? (int)internal->len : end;
   for (int i = start; i < normalized_end; i++) {
-    array_push(slice, array->state[i]);
+    array_push(slice, internal->state[i]);
   }
 
   return slice;
 }
 
-bool *array_remove(Array *array, int idx) {
-  if (array->len < idx) {
+bool array_remove(Array *array, int idx) {
+  array_t *internal = (array_t *)array;
+
+  if (internal->len < idx) {
     return false;
   }
 
-  for (int i = 0; i < array->len - 1; i++) {
+  for (int i = 0; i < internal->len - 1; i++) {
     if (i >= idx) {
-      array->state[i] = array->state[i + 1];
+      internal->state[i] = internal->state[i + 1];
     }
   }
 
-  array->len--;
+  internal->len--;
   return true;
 }
 
 Array *array_map(Array *array, CallbackFunction *callback) {
+  array_t *internal = (array_t *)array;
+
   Array *ret = array_init();
-  for (unsigned int i = 0; i < array->len; i++) {
-    array_push(ret, callback(array->state[i], i, array));
+  for (unsigned int i = 0; i < internal->len; i++) {
+    array_push(ret, callback(internal->state[i], i, array));
   }
 
   return ret;
@@ -110,9 +148,11 @@ Array *array_map(Array *array, CallbackFunction *callback) {
 
 Array *array_filter(Array *array, PredicateFunction *predicate,
                     void *compare_to) {
+  array_t *internal = (array_t *)array;
+
   Array *ret = array_init();
-  for (unsigned int i = 0; i < array->len; i++) {
-    void *el = array->state[i];
+  for (unsigned int i = 0; i < internal->len; i++) {
+    void *el = internal->state[i];
     if (predicate(el, i, array, compare_to)) {
       array_push(ret, el);
     }
@@ -122,13 +162,17 @@ Array *array_filter(Array *array, PredicateFunction *predicate,
 }
 
 void array_foreach(Array *array, CallbackFunction *callback) {
-  for (unsigned int i = 0; i < array->len; i++) {
-    callback(array->state[i], i, array);
+  array_t *internal = (array_t *)array;
+
+  for (unsigned int i = 0; i < internal->len; i++) {
+    callback(internal->state[i], i, array);
   }
 }
 
 void array_free(Array *array) {
-  free(array->state);
-  array->state = NULL;
-  free(array);
+  array_t *internal = (array_t *)array;
+
+  free(internal->state);
+  internal->state = NULL;
+  free(internal);
 }

@@ -14,6 +14,7 @@ all:
 clean:
 	rm -f $(SRC:.c=.o) $(BIN)
 
+# `make -s test` for cleaner output
 test:
 	./scripts/test.bash
 	$(MAKE) clean
