@@ -7,7 +7,7 @@ char *str_truncate(const char *s, int len) {
   unsigned int full_len = strlen(s);
 
   // Simply return a copy if invalid len
-  if (len <= 0 || len >= (unsigned int)strlen(s)) {
+  if (len <= 0 || len >= (int)strlen(s)) {
     char *sc = malloc(full_len);
     strncpy(sc, s, full_len);
 

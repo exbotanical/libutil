@@ -1,6 +1,6 @@
-#include "fmt.h"
+#include "../src/fmt.h"
 
-#include "tap.c/tap.h"
+#include "../deps/tap.c/tap.h"
 
 void test_fmt_str() {
   char *formatted = fmt_str("%s %d %s", "test", 11, "string");

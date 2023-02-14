@@ -8,7 +8,7 @@ Array *make_test_array() {
   Array *array = array_init();
 
   char values[] = {'x', 'y', 'z', '1', '2', '3'};
-  for (int i = 0; i < 6; i++) {
+  for (unsigned int i = 0; i < 6; i++) {
     array_push(array, (void *)values[i]);
   }
 
@@ -48,7 +48,7 @@ void test_array_push() {
   array_t *array = (array_t *)array_init();
 
   char values[] = {'x', 'y', 'z'};
-  for (int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; i++) {
     void *el = (void *)values[i];
 
     cmp_ok(array_push((Array *)array, el), "==", true,
@@ -63,7 +63,7 @@ void test_array_pop() {
   Array *array = array_init();
 
   char values[] = {'x', 'y', 'z'};
-  int i = 0;
+  unsigned int i = 0;
   for (; i < 3; i++) {
     array_push(array, (void *)values[i]);
   }
@@ -79,7 +79,7 @@ void test_array_pop_empty() {
   Array *array = array_init();
 
   char values[] = {'x', 'y', 'z'};
-  int i = 0;
+  unsigned int i = 0;
   for (; i < 3; i++) {
     array_push(array, (void *)values[i]);
   }
@@ -95,7 +95,7 @@ void test_array_shift() {
   array_t *internal = (array_t *)array;
 
   char values[] = {'x', 'y', 'z'};
-  for (int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; i++) {
     array_push(array, (void *)values[i]);
   }
 
@@ -124,7 +124,7 @@ void test_array_slice() {
 
   cmp_ok(sliced->len, "==", 3, "slices the range of elements inclusively");
 
-  for (int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; i++) {
     cmp_ok((int)sliced->state[i], "==", (int)((array_t *)array)->state[i + 1],
            "contains the sliced elements");
   }
@@ -138,7 +138,7 @@ void test_array_remove() {
          "returns true when the element was removed");
 
   char values[] = {'x', 'y', '1', '2', '3'};
-  for (int i = 0; i < internal->len; i++) {
+  for (unsigned int i = 0; i < internal->len; i++) {
     cmp_ok((int)internal->state[i], "==", values[i],
            "contains all elements except for removed");
   }
@@ -152,7 +152,9 @@ void test_array_remove_not_found() {
 }
 
 #define MAPPER_INC 10
-void *mapper(void *el, int index, Array *array) { return el + MAPPER_INC; }
+void *mapper(void *el, unsigned int index, Array *array) {
+  return el + MAPPER_INC;
+}
 
 void test_array_map() {
   Array *array = make_test_array();
@@ -162,14 +164,14 @@ void test_array_map() {
   cmp_ok(transformed->len, "==", internal->len,
          "has the same length as the input array");
 
-  for (int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; i++) {
     cmp_ok((int)transformed->state[i],
            "==", (int)internal->state[i] + MAPPER_INC,
            "applies the function to each element");
   }
 }
 
-bool filter(void *el, int index, Array *array, void *compare_to) {
+bool filter(void *el, unsigned int index, Array *array, void *compare_to) {
   return el > compare_to;
 }
 void test_array_filter() {
@@ -177,7 +179,7 @@ void test_array_filter() {
 
   array_t *transformed = (array_t *)array_filter(array, filter, (void *)'A');
   cmp_ok(transformed->len, "==", 3, "has a length of filtered elements only");
-  for (int i = 0; i < transformed->len; i++) {
+  for (unsigned int i = 0; i < transformed->len; i++) {
     void *el = transformed->state[i];
 
     if ((int)el > 'A') {
