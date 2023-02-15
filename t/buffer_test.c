@@ -8,8 +8,9 @@
 void test_buffer_init() {
   Buffer *buf = buffer_init(NULL);
 
-  is(buf->state, NULL, "newly initialized buffer's state is NULL");
-  ok(buf->len == 0, "newly initialized buffer's length is 0");
+  is(((buffer_t *)buf)->state, NULL,
+     "newly initialized buffer's state is NULL");
+  ok(((buffer_t *)buf)->len == 0, "newly initialized buffer's length is 0");
 
   buffer_free(buf);
 }
@@ -20,10 +21,10 @@ void test_buffer_init_with_initial() {
 
   Buffer *buf = buffer_init(test_str);
 
-  is(buf->state, test_str, "newly initialized buffer's state equals %s",
-     test_str);
-  ok(buf->len == test_str_len, "newly initialized buffer's length is %d",
-     test_str_len);
+  is(((buffer_t *)buf)->state, test_str,
+     "newly initialized buffer's state equals %s", test_str);
+  ok(((buffer_t *)buf)->len == test_str_len,
+     "newly initialized buffer's length is %d", test_str_len);
 
   buffer_free(buf);
 }
@@ -38,9 +39,11 @@ void test_buffer_append() {
   char *expected =
       "abcdefghijklmnopqrstuvwxyz12345678910abcdefghijklmnopqrstuvwxyz";
 
-  is(buf->state, expected, "buffer holds all appended characters in order");
+  is(((buffer_t *)buf)->state, expected,
+     "buffer holds all appended characters in order");
   unsigned int expected_len = strlen(expected);
-  ok(buf->len == strlen(expected), "buffer's length is %d", expected_len);
+  ok(((buffer_t *)buf)->len == strlen(expected), "buffer's length is %d",
+     expected_len);
 
   buffer_free(buf);
 }
@@ -54,9 +57,11 @@ void test_buffer_append_with() {
 
   char *expected = "abcdefghij12345abcdefghij";
 
-  is(buf->state, expected, "buffer contains all appended characters in order");
+  is(((buffer_t *)buf)->state, expected,
+     "buffer contains all appended characters in order");
   unsigned int expected_len = strlen(expected);
-  ok(buf->len == expected_len, "buffer's length is %d", expected_len);
+  ok(((buffer_t *)buf)->len == expected_len, "buffer's length is %d",
+     expected_len);
 
   buffer_free(buf);
 }
@@ -66,9 +71,11 @@ void test_buffer_concat() {
   Buffer *buf_b = buffer_init("string");
   Buffer *buf_c = buffer_concat(buf_a, buf_b);
 
-  is(buf_c->state, "teststring", "concatenates the two buffers' states");
+  is(((buffer_t *)buf_c)->state, "teststring",
+     "concatenates the two buffers' states");
   unsigned int expected_len = strlen("teststring");
-  ok(buf_c->len == expected_len, "buffer's length is %d", expected_len);
+  ok(((buffer_t *)buf_c)->len == expected_len, "buffer's length is %d",
+     expected_len);
 
   buffer_free(buf_a);
   buffer_free(buf_b);

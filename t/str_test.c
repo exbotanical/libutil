@@ -27,13 +27,19 @@ void test_str_truncate_too_small() {
   is(ret, string, "returns the given string as-is");
 }
 
+void test_str_concat() {
+  char *ret = str_concat("hello", " world");
+  is(ret, "hello world", "concatenates the provided strings");
+}
+
 int main(int argc, char *argv[]) {
-  plan(4);
+  plan(5);
 
   test_str_truncate();
   test_str_truncate_too_long();
   test_str_truncate_zero();
   test_str_truncate_too_small();
+  test_str_concat();
 
   done_testing();
 }

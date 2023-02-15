@@ -6,10 +6,12 @@
 /**
  * @brief A dynamic string buffer.
  */
-typedef struct buffer {
+typedef struct {
   char *state;
   unsigned int len;
-} Buffer;
+} buffer_t;
+
+typedef buffer_t *Buffer;
 
 /**
  * @brief Allocates memory for a new buffer.

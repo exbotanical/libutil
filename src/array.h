@@ -9,7 +9,7 @@ typedef struct {
   unsigned int len;
 } array_t;
 
-typedef struct array *Array; // TODO: opaque pointers
+typedef array_t *Array;
 
 typedef void *CallbackFunction(void *el, unsigned int index, Array *array);
 typedef bool PredicateFunction(void *el, unsigned int index, Array *array,
@@ -44,5 +44,7 @@ Array *array_reduce(Array *array, ReducerFunction *reducer, Array *initial_arr);
 void array_foreach(Array *array, CallbackFunction *callback);
 
 void array_free(Array *array);
+
+unsigned int array_size(Array *array);
 
 #endif /* ARRAY_H */

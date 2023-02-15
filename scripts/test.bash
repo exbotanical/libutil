@@ -6,6 +6,10 @@ UTIL_F=util.bash
 REPO_DIR=util
 
 declare -a SKIP_FILES=(
+  # 'array_test.c'
+  # 'buffer_test.c'
+  # 'fmt_test.c'
+  # 'str_test.c'
 )
 
 not_test_file () {

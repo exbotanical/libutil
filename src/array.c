@@ -4,7 +4,6 @@
 #include <malloc.h>
 #include <stdlib.h>
 
-// TODO: expose
 unsigned int array_size(Array *array) { return ((array_t *)array)->len; }
 
 Array *array_init() {
