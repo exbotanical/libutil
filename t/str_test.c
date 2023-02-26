@@ -17,6 +17,12 @@ void test_str_truncate_end() {
      "characters");
 }
 
+void test_str_truncate() {
+  char *file_path = "./routes/hello.c";
+  char *ret = str_truncate(str_truncate(file_path, -2), 2);
+  is(ret, "routes/hello", "truncates from both ends correctly");
+}
+
 void test_str_truncate_too_long() {
   char *string = "hello world";
   char *ret = str_truncate(string, 15);
@@ -41,10 +47,11 @@ void test_str_concat() {
 }
 
 int main(int argc, char *argv[]) {
-  plan(6);
+  plan(7);
 
   test_str_truncate_begin();
   test_str_truncate_end();
+  test_str_truncate();
   test_str_truncate_too_long();
   test_str_truncate_zero();
   test_str_truncate_too_short();

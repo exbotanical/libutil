@@ -106,7 +106,7 @@ void buffer_free(Buffer *buf);
 
 char *fmt_str(char *fmt, ...);
 
-char *str_truncate(const char *s, int len);
+char *str_truncate(const char *s, int n);
 
 char *str_concat(const char *s1, const char *s2);
 

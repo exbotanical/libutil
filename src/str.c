@@ -19,7 +19,6 @@ char *str_truncate(const char *s, int n) {
 
     return ret;
   }
-
   size_t sz = (size_t)full_len - trunclen;
 
   char *ret = malloc(sz + 1);
@@ -31,7 +30,7 @@ char *str_truncate(const char *s, int n) {
     strncpy(ret, s + n, sz);
     ret[sz + 1] = '\0';
   } else {
-    strncpy(ret, s, trunclen + 1);
+    strncpy(ret, s, full_len - trunclen);
     ret[n] = '\0';
   }
 
