@@ -4,6 +4,10 @@
 
 #include "libutil.h"
 
+int buffer_size(Buffer *buf) { return ((buffer_t *)buf)->len; }
+
+char *buffer_state(Buffer *buf) { return ((buffer_t *)buf)->state; }
+
 Buffer *buffer_init(const char *init) {
   Buffer *buf = malloc(sizeof(Buffer));
   if (!buf) {

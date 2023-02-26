@@ -21,6 +21,29 @@ void test_array_init() {
   cmp_ok(array_size(array), "==", 0, "initializes the array's length to zero");
 }
 
+void test_array_size() {
+  Array *array = array_init();
+
+  cmp_ok(array_size(array), "==", 0, "retrieves initial size");
+  array_push(array, "test");
+  cmp_ok(array_size(array), "==", 1, "tracks size pointer");
+}
+
+void test_array_get() {
+  Array *array = array_init();
+  is(array_get(array, 0), NULL, "returns NULL if empty");
+  is(array_get(array, 4), NULL, "index larger than len doesn't segfault");
+  is(array_get(array, -1), NULL, "-1 index doesn't segfault");
+
+  array_push(array, 10);
+  array_push(array, 11);
+  array_push(array, 12);
+
+  is(array_get(array, 4), NULL, "index larger than len doesn't segfault");
+  cmp_ok(array_get(array, -1), "==", 12, "-1 index returns last element");
+  cmp_ok(array_get(array, 1), "==", 11, "index returns correct element");
+}
+
 bool include(void *el, void *compare_to) { return el == compare_to; }
 
 void test_array_includes() {
@@ -113,7 +136,7 @@ void test_array_shift() {
 void test_array_shift_empty() {
   Array *array = array_init();
 
-  is(array_shift(array), NULL);
+  is(array_shift(array), NULL, "shift on an empty array returns NULL");
 }
 
 void test_array_slice() {
@@ -188,9 +211,11 @@ void test_array_filter() {
 }
 
 int main() {
-  plan(51);
+  plan(59);
 
   test_array_init();
+  test_array_size();
+  test_array_get();
   test_array_includes();
   test_array_push();
   test_array_pop();

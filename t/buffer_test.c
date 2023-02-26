@@ -14,6 +14,24 @@ void test_buffer_init() {
   buffer_free(buf);
 }
 
+void test_buffer_size() {
+  Buffer *buf = buffer_init(NULL);
+  cmp_ok(buffer_size(buf), "==", 0, "retrieves initial size");
+
+  buffer_append(buf, "hello");
+  cmp_ok(buffer_size(buf), "==", 5, "retrieves updated size");
+}
+
+void test_buffer_state() {
+  const char *v = "hello";
+
+  Buffer *buf = buffer_init(NULL);
+  is(buffer_state(buf), NULL, "initial state is NULL");
+
+  buffer_append(buf, v);
+  is(buffer_state(buf), v, "initial state is %s", v);
+}
+
 void test_buffer_init_with_initial() {
   char *test_str = "test";
   unsigned int test_str_len = strlen(test_str);
@@ -104,11 +122,13 @@ void test_buffer_free_nonnull() {
 }
 
 int main(int argc, char *argv[]) {
-  plan(13);
+  plan(17);
 
   test_buffer_free();
   test_buffer_free_nonnull();
   test_buffer_init();
+  test_buffer_size();
+  test_buffer_state();
   test_buffer_init_with_initial();
   test_buffer_append();
   test_buffer_append_with();

@@ -23,6 +23,8 @@ typedef bool ComparatorFunction(void *el, void *compare_to);
 
 unsigned int array_size(Array *array);
 
+void *array_get(Array *array, int index);
+
 Array *array_init();
 
 bool array_includes(Array *array, ComparatorFunction *comparator,
@@ -62,6 +64,10 @@ typedef struct {
 } buffer_t;
 
 typedef buffer_t *Buffer;
+
+int buffer_size(Buffer *buf);
+
+char *buffer_state(Buffer *buf);
 
 /**
  * @brief Allocates memory for a new buffer.
