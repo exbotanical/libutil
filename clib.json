@@ -13,10 +13,7 @@
     "helpers"
   ],
   "src": [
-    "src/array.h",
-    "src/buffer.h",
-    "src/fmt.h",
-    "src/str.h",
+    "src/libutil.h",
     "src/array.c",
     "src/buffer.c",
     "src/fmt.c",
