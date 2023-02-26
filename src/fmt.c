@@ -1,8 +1,8 @@
-#include "fmt.h"
-
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "libutil.h"
 
 char *fmt_str(char *fmt, ...) {
   va_list args, args_cp;

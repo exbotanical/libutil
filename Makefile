@@ -1,22 +1,45 @@
-CC=gcc
-CFLAGS=-g -fPIC -Ideps -Wall -Wextra -pedantic -std=c17
-LDFLAGS=-shared -o
+# Directories
+SRC_DIR := src
+DEP_DIR := deps
 
-BIN=libutil.so
+# Compiler
+CC := gcc
+CFLAGS := -Wall -Wextra -pedantic -std=c17
 
-SRC=$(wildcard src/*.c)
-DEPS=$(wildcard deps/*/*.c)
-TESTS = $(patsubst %.c, %, $(wildcard t/*.c))
+# Targets
+TARGET := libutil.a
+EXAMPLE_TARGET := example
 
-all:
-	$(CC) $(CFLAGS) $(SRC) $(DEPS) $(LDFLAGS) $(BIN)
+# Source files
+SRCS := $(wildcard $(SRC_DIR)/*.c) $(wildcard $(DEP_DIR)/*/*.c)
+
+# Object files
+OBJS := $(patsubst %.c,%.o,$(SRCS))
+
+# Rule to build object files from source files
+%.o: $(SRC_DIR)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+%.o: $(DEP_DIR)/%/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Rule to create the static library
+$(TARGET): $(OBJS)
+	ar rcs $@ $^
+	rm $(OBJS)
+
+# Rule to build the example executable
+$(EXAMPLE_TARGET): examples/main.c $(TARGET)
+	$(CC) -Isrc -Ideps $(CFLAGS) $< -L./ -lutil -o $@
+
+.PHONY: clean
 
 clean:
-	rm -f $(SRC:.c=.o) $(BIN)
+	rm -f $(OBJS) $(TARGET) $(EXAMPLE_TARGET)
 
-# `make -s test` for cleaner output
-test:
-	./scripts/test.bash
-	$(MAKE) clean
+# TESTS := $(patsubst %.c, %, $(wildcard t/*.c))
 
-.PHONY: test clean
+# # `make -s test` for cleaner output
+# test:
+# 	./scripts/test.bash
+# 	$(MAKE) clean

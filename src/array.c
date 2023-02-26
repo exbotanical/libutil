@@ -1,8 +1,8 @@
-#include "array.h"
-
 #include <errno.h>
 #include <malloc.h>
 #include <stdlib.h>
+
+#include "libutil.h"
 
 unsigned int array_size(Array *array) { return ((array_t *)array)->len; }
 

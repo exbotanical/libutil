@@ -1,5 +1,4 @@
-*.so
+*.a
 *.o
-c-util
-main
+example
 deps

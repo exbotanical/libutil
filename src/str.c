@@ -1,10 +1,10 @@
-#include "str.h"
-
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "libutil.h"
 
 size_t sizeof_char = sizeof(char);
 
