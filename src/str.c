@@ -8,20 +8,32 @@
 
 size_t sizeof_char = sizeof(char);
 
-char *str_truncate(const char *s, int len) {
+char *str_truncate(const char *s, int n) {
   unsigned int full_len = strlen(s);
+  int trunclen = abs(n);
 
-  // Simply return a copy if invalid len
-  if (len <= 0 || len >= (int)strlen(s)) {
+  // Simply return a copy if invalid n
+  if (n == 0 || trunclen >= full_len) {
     char *ret = malloc(full_len);
-    strncpy(ret, s, full_len);
+    strcpy(ret, s);
 
     return ret;
   }
 
-  char *ret = malloc(len + 1);
-  strncpy(ret, s, len + 1);
-  ret[len] = '\0';
+  size_t sz = (size_t)full_len - trunclen;
+
+  char *ret = malloc(sz + 1);
+  if (!ret) {
+    return NULL;
+  }
+
+  if (n > 0) {
+    strncpy(ret, s + n, sz);
+    ret[sz + 1] = '\0';
+  } else {
+    strncpy(ret, s, trunclen + 1);
+    ret[n] = '\0';
+  }
 
   return ret;
 }
