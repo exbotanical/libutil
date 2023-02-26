@@ -32,16 +32,18 @@ void test_array_size() {
 void test_array_get() {
   Array *array = array_init();
   is(array_get(array, 0), NULL, "returns NULL if empty");
-  is(array_get(array, 4), NULL, "index larger than len doesn't segfault");
-  is(array_get(array, -1), NULL, "-1 index doesn't segfault");
+  is(array_get(array, 4), NULL, "index larger than len returns NULL");
+  is(array_get(array, -1), NULL, "-1 index returns NULL");
+  is(array_get(array, -4), NULL, "negative index larger than len returns NULL");
 
   array_push(array, 10);
   array_push(array, 11);
   array_push(array, 12);
 
-  is(array_get(array, 4), NULL, "index larger than len doesn't segfault");
+  is(array_get(array, 4), NULL, "index larger than len returns NULL");
   cmp_ok(array_get(array, -1), "==", 12, "-1 index returns last element");
   cmp_ok(array_get(array, 1), "==", 11, "index returns correct element");
+  cmp_ok(array_get(array, -2), "==", 11, "index returns correct element");
 }
 
 bool include(void *el, void *compare_to) { return el == compare_to; }
@@ -211,7 +213,7 @@ void test_array_filter() {
 }
 
 int main() {
-  plan(59);
+  plan(61);
 
   test_array_init();
   test_array_size();

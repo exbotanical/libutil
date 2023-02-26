@@ -8,16 +8,17 @@ unsigned int array_size(Array *array) { return ((array_t *)array)->len; }
 
 void *array_get(Array *array, int index) {
   array_t *internal = (array_t *)array;
-
-  if (index == -1) {
-    if (internal->len == 0) {
-      return NULL;
-    }
-    return internal->state[internal->len - 1];
+  if (internal->len == 0) {
+    return NULL;
   }
 
-  if (index > internal->len) {
+  unsigned int absolute = abs(index);
+  if (absolute >= internal->len) {
     return NULL;
+  }
+
+  if (index < 0) {
+    return internal->state[internal->len - absolute];
   }
 
   return internal->state[index];

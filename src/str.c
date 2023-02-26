@@ -10,7 +10,7 @@ size_t sizeof_char = sizeof(char);
 
 char *str_truncate(const char *s, int n) {
   unsigned int full_len = strlen(s);
-  int trunclen = abs(n);
+  unsigned int trunclen = abs(n);
 
   // Simply return a copy if invalid n
   if (n == 0 || trunclen >= full_len) {
