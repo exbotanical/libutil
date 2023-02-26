@@ -16,10 +16,9 @@ Array *make_test_array() {
 
 void test_array_init() {
   Array *array;
-  array_t *internal = (array_t *)array;
 
   lives_ok({ array = array_init(); }, "initializes array");
-  cmp_ok((int)internal->len, "==", 0, "initializes the array's length to zero");
+  cmp_ok(array_size(array), "==", 0, "initializes the array's length to zero");
 }
 
 bool include(void *el, void *compare_to) { return el == compare_to; }
