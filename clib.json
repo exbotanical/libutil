@@ -13,7 +13,7 @@
     "helpers"
   ],
   "src": [
-    "src/libutil.h",
+    "include/libutil.h",
     "src/array.c",
     "src/buffer.c",
     "src/fmt.c",

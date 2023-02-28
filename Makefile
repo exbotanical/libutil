@@ -1,10 +1,10 @@
 # Directories
 SRC_DIR := src
 DEP_DIR := deps
-
+INCLUDE_DIR := include
 # Compiler
 CC := gcc
-CFLAGS := -Wall -Wextra -pedantic -std=c17
+CFLAGS := -I$(INCLUDE_DIR) -Wall -Wextra -pedantic -std=c17
 
 # Targets
 TARGET := libutil.a
@@ -42,7 +42,7 @@ $(TARGET): $(OBJS)
 $(EXAMPLE_TARGET): examples/main.c $(TARGET)
 	$(CC) -I$(SRC_DIR) -I$(DEP_DIR) $(CFLAGS) $< -L./ -l$(LINK_NAME) -o $@
 
-.PHONY: clean
+.PHONY: clean test .compile_test
 
 clean:
 	rm -f $(OBJS) $(TARGET) $(EXAMPLE_TARGET) $(TEST_TARGET)
@@ -57,4 +57,4 @@ test: $(TARGET)
 	rm $(TEST_TARGET)
 
 .compile_test:
-	gcc -D debug -I$(DEP_DIR) -I$(SRC_DIR) $(file) -o $(TEST_TARGET) -L./ -l$(LINK_NAME)
+	$(CC) -D debug -I$(DEP_DIR) -I$(SRC_DIR) $(file) -o $(TEST_TARGET) -L./ -l$(LINK_NAME)
