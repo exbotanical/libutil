@@ -4,10 +4,10 @@
 
 #include "libutil.h"
 
-unsigned int array_size(Array *array) { return ((array_t *)array)->len; }
+unsigned int array_size(array_t *array) { return ((__array_t *)array)->len; }
 
-void *array_get(Array *array, int index) {
-  array_t *internal = (array_t *)array;
+void *array_get(array_t *array, int index) {
+  __array_t *internal = (__array_t *)array;
   if (internal->len == 0) {
     return NULL;
   }
@@ -24,14 +24,14 @@ void *array_get(Array *array, int index) {
   return internal->state[index];
 }
 
-Array *array_init() {
-  Array *array = malloc(sizeof(Array));
+array_t *array_init() {
+  array_t *array = malloc(sizeof(array_t));
   if (!array) {
     errno = ENOMEM;
     return NULL;
   }
 
-  array_t *internal = (array_t *)array;
+  __array_t *internal = (__array_t *)array;
 
   internal->state = malloc(sizeof(void *));
   if (!internal->state) {
@@ -44,9 +44,9 @@ Array *array_init() {
   return array;
 }
 
-bool array_includes(Array *array, ComparatorFunction *comparator,
+bool array_includes(array_t *array, comparator_function_t *comparator,
                     void *compare_to) {
-  array_t *internal = (array_t *)array;
+  __array_t *internal = (__array_t *)array;
 
   for (unsigned int i = 0; i < internal->len; i++) {
     if (comparator(internal->state[i], compare_to)) {
@@ -57,8 +57,9 @@ bool array_includes(Array *array, ComparatorFunction *comparator,
   return false;
 }
 
-int array_find(Array *array, ComparatorFunction *comparator, void *compare_to) {
-  array_t *internal = (array_t *)array;
+int array_find(array_t *array, comparator_function_t *comparator,
+               void *compare_to) {
+  __array_t *internal = (__array_t *)array;
 
   for (unsigned int i = 0; i < internal->len; i++) {
     if (comparator(internal->state[i], compare_to)) {
@@ -69,8 +70,8 @@ int array_find(Array *array, ComparatorFunction *comparator, void *compare_to) {
   return -1;
 }
 
-bool array_push(Array *array, void *el) {
-  array_t *internal = (array_t *)array;
+bool array_push(array_t *array, void *el) {
+  __array_t *internal = (__array_t *)array;
 
   void **next_state =
       realloc(internal->state, (internal->len + 1) * sizeof(void *));
@@ -87,8 +88,8 @@ bool array_push(Array *array, void *el) {
   return true;
 }
 
-void *array_pop(Array *array) {
-  array_t *internal = (array_t *)array;
+void *array_pop(array_t *array) {
+  __array_t *internal = (__array_t *)array;
 
   unsigned int len = internal->len;
 
@@ -105,15 +106,15 @@ void *array_pop(Array *array) {
   return NULL;
 }
 
-void *array_shift(Array *array) {
-  array_t *internal = (array_t *)array;
+void *array_shift(array_t *array) {
+  __array_t *internal = (__array_t *)array;
 
   if (internal->len == 0) {
     return false;
   }
 
   void *el = internal->state[0];
-  Array *new = array_init();
+  array_t *new = array_init();
 
   for (unsigned int i = 1; i < internal->len; i++) {
     array_push(new, internal->state[i]);
@@ -124,9 +125,9 @@ void *array_shift(Array *array) {
   return el;
 }
 
-Array *array_slice(Array *array, unsigned start, int end) {
-  array_t *internal = (array_t *)array;
-  Array *slice = array_init();
+array_t *array_slice(array_t *array, unsigned start, int end) {
+  __array_t *internal = (__array_t *)array;
+  array_t *slice = array_init();
 
   // TODO: test -1
   unsigned int normalized_end = end == -1 ? (int)internal->len : end;
@@ -137,8 +138,8 @@ Array *array_slice(Array *array, unsigned start, int end) {
   return slice;
 }
 
-bool array_remove(Array *array, unsigned int index) {
-  array_t *internal = (array_t *)array;
+bool array_remove(array_t *array, unsigned int index) {
+  __array_t *internal = (__array_t *)array;
 
   if (internal->len < index) {
     return false;
@@ -154,10 +155,10 @@ bool array_remove(Array *array, unsigned int index) {
   return true;
 }
 
-Array *array_map(Array *array, CallbackFunction *callback) {
-  array_t *internal = (array_t *)array;
+array_t *array_map(array_t *array, callback_function_t *callback) {
+  __array_t *internal = (__array_t *)array;
 
-  Array *ret = array_init();
+  array_t *ret = array_init();
   for (unsigned int i = 0; i < internal->len; i++) {
     array_push(ret, callback(internal->state[i], i, array));
   }
@@ -165,11 +166,11 @@ Array *array_map(Array *array, CallbackFunction *callback) {
   return ret;
 }
 
-Array *array_filter(Array *array, PredicateFunction *predicate,
-                    void *compare_to) {
-  array_t *internal = (array_t *)array;
+array_t *array_filter(array_t *array, predicate_function_t *predicate,
+                      void *compare_to) {
+  __array_t *internal = (__array_t *)array;
 
-  Array *ret = array_init();
+  array_t *ret = array_init();
   for (unsigned int i = 0; i < internal->len; i++) {
     void *el = internal->state[i];
     if (predicate(el, i, array, compare_to)) {
@@ -180,16 +181,16 @@ Array *array_filter(Array *array, PredicateFunction *predicate,
   return ret;
 }
 
-void array_foreach(Array *array, CallbackFunction *callback) {
-  array_t *internal = (array_t *)array;
+void array_foreach(array_t *array, callback_function_t *callback) {
+  __array_t *internal = (__array_t *)array;
 
   for (unsigned int i = 0; i < internal->len; i++) {
     callback(internal->state[i], i, array);
   }
 }
 
-void array_free(Array *array) {
-  array_t *internal = (array_t *)array;
+void array_free(array_t *array) {
+  __array_t *internal = (__array_t *)array;
 
   free(internal->state);
   internal->state = NULL;

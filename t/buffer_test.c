@@ -5,17 +5,17 @@
 #include "tap.c/tap.h"
 
 void test_buffer_init() {
-  Buffer *buf = buffer_init(NULL);
+  buffer_t *buf = buffer_init(NULL);
 
-  is(((buffer_t *)buf)->state, NULL,
+  is(((__buffer_t *)buf)->state, NULL,
      "newly initialized buffer's state is NULL");
-  ok(((buffer_t *)buf)->len == 0, "newly initialized buffer's length is 0");
+  ok(((__buffer_t *)buf)->len == 0, "newly initialized buffer's length is 0");
 
   buffer_free(buf);
 }
 
 void test_buffer_size() {
-  Buffer *buf = buffer_init(NULL);
+  buffer_t *buf = buffer_init(NULL);
   cmp_ok(buffer_size(buf), "==", 0, "retrieves initial size");
 
   buffer_append(buf, "hello");
@@ -25,7 +25,7 @@ void test_buffer_size() {
 void test_buffer_state() {
   const char *v = "hello";
 
-  Buffer *buf = buffer_init(NULL);
+  buffer_t *buf = buffer_init(NULL);
   is(buffer_state(buf), NULL, "initial state is NULL");
 
   buffer_append(buf, v);
@@ -36,18 +36,18 @@ void test_buffer_init_with_initial() {
   char *test_str = "test";
   unsigned int test_str_len = strlen(test_str);
 
-  Buffer *buf = buffer_init(test_str);
+  buffer_t *buf = buffer_init(test_str);
 
-  is(((buffer_t *)buf)->state, test_str,
+  is(((__buffer_t *)buf)->state, test_str,
      "newly initialized buffer's state equals %s", test_str);
-  ok(((buffer_t *)buf)->len == test_str_len,
+  ok(((__buffer_t *)buf)->len == test_str_len,
      "newly initialized buffer's length is %d", test_str_len);
 
   buffer_free(buf);
 }
 
 void test_buffer_append() {
-  Buffer *buf = buffer_init(NULL);
+  buffer_t *buf = buffer_init(NULL);
 
   buffer_append(buf, "abcdefghijklmnopqrstuvwxyz");
   buffer_append(buf, "12345678910");
@@ -56,17 +56,17 @@ void test_buffer_append() {
   char *expected =
       "abcdefghijklmnopqrstuvwxyz12345678910abcdefghijklmnopqrstuvwxyz";
 
-  is(((buffer_t *)buf)->state, expected,
+  is(((__buffer_t *)buf)->state, expected,
      "buffer holds all appended characters in order");
   unsigned int expected_len = strlen(expected);
-  ok(((buffer_t *)buf)->len == strlen(expected), "buffer's length is %d",
+  ok(((__buffer_t *)buf)->len == strlen(expected), "buffer's length is %d",
      expected_len);
 
   buffer_free(buf);
 }
 
 void test_buffer_append_with() {
-  Buffer *buf = buffer_init(NULL);
+  buffer_t *buf = buffer_init(NULL);
 
   buffer_append_with(buf, "abcdefghijklmnopqrstuvwxyz", 10);
   buffer_append_with(buf, "12345678910", 5);
@@ -74,24 +74,24 @@ void test_buffer_append_with() {
 
   char *expected = "abcdefghij12345abcdefghij";
 
-  is(((buffer_t *)buf)->state, expected,
+  is(((__buffer_t *)buf)->state, expected,
      "buffer contains all appended characters in order");
   unsigned int expected_len = strlen(expected);
-  ok(((buffer_t *)buf)->len == expected_len, "buffer's length is %d",
+  ok(((__buffer_t *)buf)->len == expected_len, "buffer's length is %d",
      expected_len);
 
   buffer_free(buf);
 }
 
 void test_buffer_concat() {
-  Buffer *buf_a = buffer_init("test");
-  Buffer *buf_b = buffer_init("string");
-  Buffer *buf_c = buffer_concat(buf_a, buf_b);
+  buffer_t *buf_a = buffer_init("test");
+  buffer_t *buf_b = buffer_init("string");
+  buffer_t *buf_c = buffer_concat(buf_a, buf_b);
 
-  is(((buffer_t *)buf_c)->state, "teststring",
+  is(((__buffer_t *)buf_c)->state, "teststring",
      "concatenates the two buffers' states");
   unsigned int expected_len = strlen("teststring");
-  ok(((buffer_t *)buf_c)->len == expected_len, "buffer's length is %d",
+  ok(((__buffer_t *)buf_c)->len == expected_len, "buffer's length is %d",
      expected_len);
 
   buffer_free(buf_a);
@@ -100,10 +100,10 @@ void test_buffer_concat() {
 }
 
 void test_buffer_concat_on_null() {
-  Buffer *buf_a = buffer_init(NULL);
-  Buffer *buf_b = buffer_init(NULL);
+  buffer_t *buf_a = buffer_init(NULL);
+  buffer_t *buf_b = buffer_init(NULL);
 
-  Buffer *buf_c = buffer_concat(buf_a, buf_b);
+  buffer_t *buf_c = buffer_concat(buf_a, buf_b);
 
   is(buf_c, NULL, "returns NULL");
 
@@ -112,12 +112,12 @@ void test_buffer_concat_on_null() {
 }
 
 void test_buffer_free() {
-  Buffer *buf = buffer_init(NULL);
+  buffer_t *buf = buffer_init(NULL);
   lives_ok({ buffer_free(buf); }, "frees the buffer's heap memory");
 }
 
 void test_buffer_free_nonnull() {
-  Buffer *buf = buffer_init("test");
+  buffer_t *buf = buffer_init("test");
   lives_ok({ buffer_free(buf); }, "frees the buffer's memory");
 }
 

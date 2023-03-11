@@ -4,19 +4,19 @@
 
 #include "libutil.h"
 
-int buffer_size(Buffer *buf) { return ((buffer_t *)buf)->len; }
+int buffer_size(buffer_t *buf) { return ((__buffer_t *)buf)->len; }
 
-char *buffer_state(Buffer *buf) { return ((buffer_t *)buf)->state; }
+char *buffer_state(buffer_t *buf) { return ((__buffer_t *)buf)->state; }
 
-Buffer *buffer_init(const char *init) {
-  Buffer *buf = malloc(sizeof(Buffer));
+buffer_t *buffer_init(const char *init) {
+  buffer_t *buf = malloc(sizeof(buffer_t));
   if (!buf) {
     free(buf);
     return NULL;
   }
 
-  ((buffer_t *)buf)->state = NULL;
-  ((buffer_t *)buf)->len = 0;
+  ((__buffer_t *)buf)->state = NULL;
+  ((__buffer_t *)buf)->len = 0;
 
   if (init != NULL) {
     buffer_append(buf, init);
@@ -25,12 +25,12 @@ Buffer *buffer_init(const char *init) {
   return buf;
 }
 
-bool buffer_append(Buffer *buf, const char *s) {
+bool buffer_append(buffer_t *buf, const char *s) {
   if (!s) {
     return false;
   }
 
-  buffer_t *internal = (buffer_t *)buf;
+  __buffer_t *internal = (__buffer_t *)buf;
   unsigned int len = strlen(s);
 
   // get mem sizeof current str + sizeof append str
@@ -47,8 +47,8 @@ bool buffer_append(Buffer *buf, const char *s) {
   return true;
 }
 
-bool buffer_append_with(Buffer *buf, const char *s, unsigned int len) {
-  buffer_t *internal = (buffer_t *)buf;
+bool buffer_append_with(buffer_t *buf, const char *s, unsigned int len) {
+  __buffer_t *internal = (__buffer_t *)buf;
 
   char *next = realloc(internal->state, internal->len + len);
   if (!next) {
@@ -62,14 +62,14 @@ bool buffer_append_with(Buffer *buf, const char *s, unsigned int len) {
   return true;
 }
 
-Buffer *buffer_concat(Buffer *buf_a, Buffer *buf_b) {
-  Buffer *buf = buffer_init(((buffer_t *)buf_a)->state);
+buffer_t *buffer_concat(buffer_t *buf_a, buffer_t *buf_b) {
+  buffer_t *buf = buffer_init(((__buffer_t *)buf_a)->state);
   if (!buf) {
     buffer_free(buf);
     return NULL;
   }
 
-  if (!buffer_append(buf, ((buffer_t *)buf_b)->state)) {
+  if (!buffer_append(buf, ((__buffer_t *)buf_b)->state)) {
     buffer_free(buf);
     return NULL;
   }
@@ -77,10 +77,10 @@ Buffer *buffer_concat(Buffer *buf_a, Buffer *buf_b) {
   return buf;
 }
 
-void buffer_free(Buffer *buf) {
-  buffer_t *internal = (buffer_t *)buf;
+void buffer_free(buffer_t *buf) {
+  __buffer_t *internal = (__buffer_t *)buf;
 
-  // Because Buffer's state member is initialized lazily, we need only dealloc
+  // Because buffer_t's state member is initialized lazily, we need only dealloc
   // if it was actually allocated to begin with
   if (internal->len) {
     free(internal->state);

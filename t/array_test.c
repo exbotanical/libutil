@@ -3,8 +3,8 @@
 #include "libutil.h"
 #include "tap.c/tap.h"
 
-Array *make_test_array() {
-  Array *array = array_init();
+array_t *make_test_array() {
+  array_t *array = array_init();
 
   char values[] = {'x', 'y', 'z', '1', '2', '3'};
   for (unsigned int i = 0; i < 6; i++) {
@@ -15,14 +15,14 @@ Array *make_test_array() {
 }
 
 void test_array_init() {
-  Array *array;
+  array_t *array;
 
   lives_ok({ array = array_init(); }, "initializes array");
   cmp_ok(array_size(array), "==", 0, "initializes the array's length to zero");
 }
 
 void test_array_size() {
-  Array *array = array_init();
+  array_t *array = array_init();
 
   cmp_ok(array_size(array), "==", 0, "retrieves initial size");
   array_push(array, "test");
@@ -30,7 +30,7 @@ void test_array_size() {
 }
 
 void test_array_get() {
-  Array *array = array_init();
+  array_t *array = array_init();
   is(array_get(array, 0), NULL, "returns NULL if empty");
   is(array_get(array, 4), NULL, "index larger than len returns NULL");
   is(array_get(array, -1), NULL, "-1 index returns NULL");
@@ -49,7 +49,7 @@ void test_array_get() {
 bool include(void *el, void *compare_to) { return el == compare_to; }
 
 void test_array_includes() {
-  Array *array = make_test_array();
+  array_t *array = make_test_array();
 
   cmp_ok(array_includes(array, include, (void *)'z'), "==", true,
          "returns true when it includes the element");
@@ -60,7 +60,7 @@ void test_array_includes() {
 bool find(void *el, void *compare_to) { return el == compare_to; }
 
 void test_array_find() {
-  Array *array = make_test_array();
+  array_t *array = make_test_array();
   cmp_ok((int)array_find(array, find, (void *)'z'), "==", 2,
          "returns index when it finds the element");
   cmp_ok(array_find(array, find, (void *)'n'), "==", -1,
@@ -68,13 +68,13 @@ void test_array_find() {
 }
 
 void test_array_push() {
-  array_t *array = (array_t *)array_init();
+  __array_t *array = (__array_t *)array_init();
 
   char values[] = {'x', 'y', 'z'};
   for (unsigned int i = 0; i < 3; i++) {
     void *el = (void *)values[i];
 
-    cmp_ok(array_push((Array *)array, el), "==", true,
+    cmp_ok(array_push((array_t *)array, el), "==", true,
            "returns true when successful");
     cmp_ok(array->len, "==", i + 1, "increases the array's length by one");
     cmp_ok((int)array->state[i], "==", (int)el,
@@ -83,7 +83,7 @@ void test_array_push() {
 }
 
 void test_array_pop() {
-  Array *array = array_init();
+  array_t *array = array_init();
 
   char values[] = {'x', 'y', 'z'};
   unsigned int i = 0;
@@ -93,13 +93,13 @@ void test_array_pop() {
   for (; i > 0; i--) {
     cmp_ok((int)array_pop(array), "==", values[i - 1],
            "removes the element from the end of the array");
-    cmp_ok((int)((array_t *)array)->len, "==", i - 1,
+    cmp_ok((int)((__array_t *)array)->len, "==", i - 1,
            "decreases the array's length by one");
   }
 }
 
 void test_array_pop_empty() {
-  Array *array = array_init();
+  array_t *array = array_init();
 
   char values[] = {'x', 'y', 'z'};
   unsigned int i = 0;
@@ -114,8 +114,8 @@ void test_array_pop_empty() {
 }
 
 void test_array_shift() {
-  Array *array = array_init();
-  array_t *internal = (array_t *)array;
+  array_t *array = array_init();
+  __array_t *internal = (__array_t *)array;
 
   char values[] = {'x', 'y', 'z'};
   for (unsigned int i = 0; i < 3; i++) {
@@ -136,26 +136,26 @@ void test_array_shift() {
 }
 
 void test_array_shift_empty() {
-  Array *array = array_init();
+  array_t *array = array_init();
 
   is(array_shift(array), NULL, "shift on an empty array returns NULL");
 }
 
 void test_array_slice() {
-  Array *array = make_test_array();
-  array_t *sliced = (array_t *)array_slice(array, 1, 4);
+  array_t *array = make_test_array();
+  __array_t *sliced = (__array_t *)array_slice(array, 1, 4);
 
   cmp_ok(sliced->len, "==", 3, "slices the range of elements inclusively");
 
   for (unsigned int i = 0; i < 3; i++) {
-    cmp_ok((int)sliced->state[i], "==", (int)((array_t *)array)->state[i + 1],
+    cmp_ok((int)sliced->state[i], "==", (int)((__array_t *)array)->state[i + 1],
            "contains the sliced elements");
   }
 }
 
 void test_array_remove() {
-  Array *array = make_test_array();
-  array_t *internal = (array_t *)array;
+  array_t *array = make_test_array();
+  __array_t *internal = (__array_t *)array;
 
   cmp_ok(array_remove(array, 2), "==", true,
          "returns true when the element was removed");
@@ -168,22 +168,22 @@ void test_array_remove() {
 }
 
 void test_array_remove_not_found() {
-  Array *array = make_test_array();
+  array_t *array = make_test_array();
 
   cmp_ok(array_remove(array, 12), "==", false,
          "returns false when the element was not removed");
 }
 
 #define MAPPER_INC 10
-void *mapper(void *el, unsigned int index, Array *array) {
+void *mapper(void *el, unsigned int index, array_t *array) {
   return el + MAPPER_INC;
 }
 
 void test_array_map() {
-  Array *array = make_test_array();
-  array_t *internal = (array_t *)array;
+  array_t *array = make_test_array();
+  __array_t *internal = (__array_t *)array;
 
-  array_t *transformed = (array_t *)array_map(array, mapper);
+  __array_t *transformed = (__array_t *)array_map(array, mapper);
   cmp_ok(transformed->len, "==", internal->len,
          "has the same length as the input array");
 
@@ -194,13 +194,14 @@ void test_array_map() {
   }
 }
 
-bool filter(void *el, unsigned int index, Array *array, void *compare_to) {
+bool filter(void *el, unsigned int index, array_t *array, void *compare_to) {
   return el > compare_to;
 }
 void test_array_filter() {
-  Array *array = make_test_array();
+  array_t *array = make_test_array();
 
-  array_t *transformed = (array_t *)array_filter(array, filter, (void *)'A');
+  __array_t *transformed =
+      (__array_t *)array_filter(array, filter, (void *)'A');
   cmp_ok(transformed->len, "==", 3, "has a length of filtered elements only");
   for (unsigned int i = 0; i < transformed->len; i++) {
     void *el = transformed->state[i];
