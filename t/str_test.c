@@ -46,7 +46,7 @@ void test_str_concat() {
   is(ret, "hello world", "concatenates the provided strings");
 }
 
-int main(int argc, char *argv[]) {
+int main() {
   plan(7);
 
   test_str_truncate_begin();

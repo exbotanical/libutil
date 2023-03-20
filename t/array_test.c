@@ -213,8 +213,24 @@ void test_array_filter() {
   }
 }
 
+void test_foreach_macro() {
+  array_t *array = array_init();
+  array_push(array, 1);
+  array_push(array, 2);
+  array_push(array, 3);
+
+  foreach (array, x) {
+    ok(x + 1 == array_get(array, x), "iterates the array");
+  }
+
+  unsigned int count = 0;
+  foreach_i(array, x, 1) { count += 1; }
+
+  ok(2 == count, "starts at the provided count");
+}
+
 int main() {
-  plan(61);
+  plan(65);
 
   test_array_init();
   test_array_size();
@@ -231,6 +247,9 @@ int main() {
   test_array_map();
   test_array_filter();
   test_array_find();
+
+  // macros
+  test_foreach_macro();
 
   done_testing();
 }

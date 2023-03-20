@@ -6,7 +6,7 @@ void test_fmt_str() {
   is(formatted, "test 11 string", "formats each part into a single string");
 }
 
-int main(int argc, char *argv[]) {
+int main() {
   plan(1);
 
   test_fmt_str();

@@ -121,7 +121,7 @@ void test_buffer_free_nonnull() {
   lives_ok({ buffer_free(buf); }, "frees the buffer's memory");
 }
 
-int main(int argc, char *argv[]) {
+int main() {
   plan(17);
 
   test_buffer_free();

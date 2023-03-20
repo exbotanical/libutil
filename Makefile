@@ -57,4 +57,4 @@ test: $(TARGET)
 	rm $(TEST_TARGET)
 
 .compile_test:
-	$(CC) -D debug -I$(DEP_DIR) -I$(SRC_DIR) $(file) -o $(TEST_TARGET) -L./ -l$(LINK_NAME)
+	$(CC) $(CFLAGS) -D debug -I$(DEP_DIR) -I$(SRC_DIR) $(file) -o $(TEST_TARGET) -L./ -l$(LINK_NAME)
