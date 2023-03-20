@@ -229,8 +229,31 @@ void test_foreach_macro() {
   ok(2 == count, "starts at the provided count");
 }
 
+void test_has_elements_macro() {
+  array_t *array;
+
+  lives_ok(
+      { has_elements(array); },
+      "has_elements does not segfault when provided a NULL array_t pointer");
+  ok(has_elements(array) == 0, "has_elements returns false when arr is NULL");
+  ok((!has_elements(array)) == 1,
+     "negated has_elements returns true when arr is NULL");
+
+  array = array_init();
+  ok(has_elements(array) == 0,
+     "has_elements returns false when arr has no elements");
+  ok((!has_elements(array)) == 1,
+     "negated has_elements returns true when arr has no elements");
+
+  array_push(array, 1);
+  ok(has_elements(array) == 1,
+     "has_elements returns true when arr has elements");
+  ok((!has_elements(array)) == 0,
+     "negated has_elements returns false when arr has elements");
+}
+
 int main() {
-  plan(65);
+  plan(72);
 
   test_array_init();
   test_array_size();
@@ -250,6 +273,7 @@ int main() {
 
   // macros
   test_foreach_macro();
+  test_has_elements_macro();
 
   done_testing();
 }
