@@ -252,8 +252,18 @@ void test_has_elements_macro() {
      "negated has_elements returns false when arr has elements");
 }
 
+void test_array_collect() {
+  array_t *collected = array_collect("a", "b", "c");
+
+  ok(array_size(collected) == 3, "contains all and only the elements added");
+
+  is("a", array_get(collected, 0), "has the expected element");
+  is("b", array_get(collected, 1), "has the expected element");
+  is("c", array_get(collected, 2), "has the expected element");
+}
+
 int main() {
-  plan(72);
+  plan(76);
 
   test_array_init();
   test_array_size();
@@ -274,6 +284,7 @@ int main() {
   // macros
   test_foreach_macro();
   test_has_elements_macro();
+  test_array_collect();
 
   done_testing();
 }
