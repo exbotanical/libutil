@@ -171,8 +171,28 @@ void test_s_nullish() {
   ok(s_nullish(null) == false, "returns false when testing an NULL string");
 }
 
+void test_s_trim() {
+  is("cookie", s_trim(" cookie "),
+     "trims a string with whitespace on either side");
+  is("cookie", s_trim("cookie "),
+     "trims a string with whitespace at the end only");
+  is("cookie", s_trim(" cookie"),
+     "trims a string with whitespace at the start only");
+  is("cookie", s_trim("cookie"), "returns a string as-is when no whitespace");
+  is("", s_trim(""), "returns a string as-is when empty");
+  is("", s_trim("  "), "returns an empty string when only whitespace");
+
+  is("cookie", s_trim("\tcookie\t"),
+     "trims a string with ascii space on either side");
+  is("cookie", s_trim("cookie\n"),
+     "trims a string with ascii space at the end only");
+  is("cookie", s_trim("\rcookie"),
+     "trims a string with ascii space at the start only");
+  is("", s_trim("\t\t\t\r\n"), "returns an empty string when all ascii space");
+}
+
 int main() {
-  plan(35);
+  plan(45);
 
   test_s_truncate_begin();
   test_s_truncate_end();
@@ -199,6 +219,8 @@ int main() {
   test_s_equals_diff_case();
   test_s_equals_both_null();
   test_s_equals_one_null();
+
+  test_s_trim();
 
   done_testing();
 }
