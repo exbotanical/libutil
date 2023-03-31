@@ -191,6 +191,22 @@ void test_s_trim() {
   is("", s_trim("\t\t\t\r\n"), "returns an empty string when all ascii space");
 }
 
+const int v4InV6Prefix[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0xff};
+
+int *to_ip(int a, int b, int c, int d) {
+  int *p = malloc(16 * sizeof(int));
+
+  for (int i = 0; i < 12; i++) {
+    p[i] = v4InV6Prefix[i];
+  }
+
+  p[12] = a;
+  p[13] = b;
+  p[14] = c;
+  p[15] = d;
+  return p;
+}
+
 int main() {
   plan(45);
 
@@ -221,6 +237,10 @@ int main() {
   test_s_equals_one_null();
 
   test_s_trim();
+
+  to_ip(1, 2, 3, 4);
+
+  printf("%d\n", to_ip(1, 2, 3, 4)[0]);
 
   done_testing();
 }
