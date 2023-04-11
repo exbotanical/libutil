@@ -14,6 +14,7 @@ extern "C" {
 
 #define has_elements(arr) (arr != NULL && array_size(arr) > 0)
 
+// TODO: document - does not work with NULL
 #define array_collect(...) __array_collect(__VA_ARGS__, NULL)
 
 typedef struct {
