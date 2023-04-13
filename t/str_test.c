@@ -1,7 +1,7 @@
 #include "libutil.h"
 #include "tap.c/tap.h"
 
-void test_s_truncate_begin() {
+void test_s_truncate_begin(void) {
   char *string = "hello world";
   char *ret = s_truncate(string, 5);
   is(ret, " world",
@@ -9,7 +9,7 @@ void test_s_truncate_begin() {
      "characters");
 }
 
-void test_s_truncate_end() {
+void test_s_truncate_end(void) {
   char *string = "hello world";
   char *ret = s_truncate(string, -5);
   is(ret, "hello ",
@@ -17,50 +17,50 @@ void test_s_truncate_end() {
      "characters");
 }
 
-void test_s_truncate() {
+void test_s_truncate(void) {
   char *file_path = "./routes/hello.c";
   char *ret = s_truncate(s_truncate(file_path, -2), 2);
   is(ret, "routes/hello", "truncates from both ends correctly");
 }
 
-void test_s_truncate_too_long() {
+void test_s_truncate_too_long(void) {
   char *string = "hello world";
   char *ret = s_truncate(string, 15);
   is(ret, string, "returns the given string as-is");
 }
 
-void test_s_truncate_zero() {
+void test_s_truncate_zero(void) {
   char *string = "hello world";
   char *ret = s_truncate(string, 0);
   is(ret, string, "returns the given string as-is");
 }
 
-void test_s_truncate_too_short() {
+void test_s_truncate_too_short(void) {
   char *string = "hello world";
   char *ret = s_truncate(string, -15);
   is(ret, string, "returns the given string as-is");
 }
 
-void test_s_concat() {
+void test_s_concat(void) {
   char *ret = s_concat("hello", " world");
   is(ret, "hello world", "concatenates the provided strings");
 }
 
-void test_s_indexof_ok() {
+void test_s_indexof_ok(void) {
   char *test_str = "test_str";
 
   int idx = s_indexof(test_str, "_");
   ok(idx == 4, "finds the index of the target string");
 }
 
-void test_s_indexof_no_match() {
+void test_s_indexof_no_match(void) {
   char *test_str = "test_str";
 
   int idx = s_indexof(test_str, "/");
   ok(idx == -1, "returns -1 indicating no match");
 }
 
-void test_s_substr_ok() {
+void test_s_substr_ok(void) {
   char *test_str = "test_str";
 
   char *substring = s_substr(test_str, 4, 6, false);
@@ -68,7 +68,7 @@ void test_s_substr_ok() {
   is(substring, "_s", "substring matches");
 }
 
-void test_s_substr_inclusive() {
+void test_s_substr_inclusive(void) {
   char *test_str = "test_str";
 
   char *substring = s_substr(test_str, 4, 6, true);
@@ -76,7 +76,7 @@ void test_s_substr_inclusive() {
   is(substring, "_st", "inclusive substring matches");
 }
 
-void test_s_substr_no_range() {
+void test_s_substr_no_range(void) {
   char *test_str = "test_str";
 
   char *substring = s_substr(test_str, 1, 1, false);
@@ -84,7 +84,7 @@ void test_s_substr_no_range() {
   is(substring, NULL, "substring sans range yields empty string");
 }
 
-void test_s_substr_no_range_inclusive() {
+void test_s_substr_no_range_inclusive(void) {
   char *test_str = "test_str";
 
   char *substring = s_substr(test_str, 1, 1, true);
@@ -93,7 +93,7 @@ void test_s_substr_no_range_inclusive() {
      "inclusive substring sans range yields char at start index");
 }
 
-void test_s_casecmp() {
+void test_s_casecmp(void) {
   char *s1 = "Content-Type";
   char *s2 = "Content-Type-";
   ok(s_casecmp(s1, s2) == 0, "compare s1: '%s' and s2: '%s' is false", s1, s2);
@@ -120,7 +120,7 @@ void test_s_casecmp() {
   ok(s_casecmp(s2, s1) == 0, "compare s2: '%s' and s1: '%s' is false", s2, s1);
 }
 
-void test_s_upper() {
+void test_s_upper(void) {
   char *expected = "HELLO";
   char *ret = s_upper("hello");
   is(expected, ret, "upper-cases the string");
@@ -132,7 +132,7 @@ void test_s_upper() {
   is(expected, ret, "upper-cases a partially upper-cased str");
 }
 
-void test_s_equals() {
+void test_s_equals(void) {
   const char *s1 = "hello";
   const char *s2 = "hello";
 
@@ -140,7 +140,7 @@ void test_s_equals() {
   ok(s_equals(s2, s1) == true, "strings are equal");
 }
 
-void test_s_equals_diff_case() {
+void test_s_equals_diff_case(void) {
   const char *s1 = "hello";
   const char *s2 = "Hello";
 
@@ -148,18 +148,18 @@ void test_s_equals_diff_case() {
   ok(s_equals(s2, s1) == false, "strings are not equal when different case");
 }
 
-void test_s_equals_both_null() {
+void test_s_equals_both_null(void) {
   ok(s_equals(NULL, NULL) == true, "strings are equal when both are NULL");
 }
 
-void test_s_equals_one_null() {
+void test_s_equals_one_null(void) {
   const char *s1 = "hello";
 
   ok(s_equals(s1, NULL) == false, "strings are not equal when one is NULL");
   ok(s_equals(NULL, s1) == false, "strings are not equal when one is NULL");
 }
 
-void test_s_nullish() {
+void test_s_nullish(void) {
   const char *notempty = "hello";
   ok(s_nullish(notempty) == true,
      "returns true when testing a non-empty string");
@@ -171,7 +171,7 @@ void test_s_nullish() {
   ok(s_nullish(null) == false, "returns false when testing an NULL string");
 }
 
-void test_s_trim() {
+void test_s_trim(void) {
   is("cookie", s_trim(" cookie "),
      "trims a string with whitespace on either side");
   is("cookie", s_trim("cookie "),

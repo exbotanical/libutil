@@ -4,7 +4,7 @@
 #include "libutil.h"
 #include "tap.c/tap.h"
 
-void test_buffer_init() {
+void test_buffer_init(void) {
   buffer_t *buf = buffer_init(NULL);
 
   is(((__buffer_t *)buf)->state, NULL,
@@ -14,7 +14,7 @@ void test_buffer_init() {
   buffer_free(buf);
 }
 
-void test_buffer_size() {
+void test_buffer_size(void) {
   buffer_t *buf = buffer_init(NULL);
   cmp_ok(buffer_size(buf), "==", 0, "retrieves initial size");
 
@@ -22,7 +22,7 @@ void test_buffer_size() {
   cmp_ok(buffer_size(buf), "==", 5, "retrieves updated size");
 }
 
-void test_buffer_state() {
+void test_buffer_state(void) {
   const char *v = "hello";
 
   buffer_t *buf = buffer_init(NULL);
@@ -32,7 +32,7 @@ void test_buffer_state() {
   is(buffer_state(buf), v, "initial state is %s", v);
 }
 
-void test_buffer_init_with_initial() {
+void test_buffer_init_with_initial(void) {
   char *test_str = "test";
   unsigned int test_str_len = strlen(test_str);
 
@@ -46,7 +46,7 @@ void test_buffer_init_with_initial() {
   buffer_free(buf);
 }
 
-void test_buffer_append() {
+void test_buffer_append(void) {
   buffer_t *buf = buffer_init(NULL);
 
   buffer_append(buf, "abcdefghijklmnopqrstuvwxyz");
@@ -65,7 +65,7 @@ void test_buffer_append() {
   buffer_free(buf);
 }
 
-void test_buffer_append_with() {
+void test_buffer_append_with(void) {
   buffer_t *buf = buffer_init(NULL);
 
   buffer_append_with(buf, "abcdefghijklmnopqrstuvwxyz", 10);
@@ -83,7 +83,7 @@ void test_buffer_append_with() {
   buffer_free(buf);
 }
 
-void test_buffer_concat() {
+void test_buffer_concat(void) {
   buffer_t *buf_a = buffer_init("test");
   buffer_t *buf_b = buffer_init("string");
   buffer_t *buf_c = buffer_concat(buf_a, buf_b);
@@ -99,7 +99,7 @@ void test_buffer_concat() {
   buffer_free(buf_c);
 }
 
-void test_buffer_concat_on_null() {
+void test_buffer_concat_on_null(void) {
   buffer_t *buf_a = buffer_init(NULL);
   buffer_t *buf_b = buffer_init(NULL);
 
@@ -111,12 +111,12 @@ void test_buffer_concat_on_null() {
   buffer_free(buf_b);
 }
 
-void test_buffer_free() {
+void test_buffer_free(void) {
   buffer_t *buf = buffer_init(NULL);
   lives_ok({ buffer_free(buf); }, "frees the buffer's heap memory");
 }
 
-void test_buffer_free_nonnull() {
+void test_buffer_free_nonnull(void) {
   buffer_t *buf = buffer_init("test");
   lives_ok({ buffer_free(buf); }, "frees the buffer's memory");
 }

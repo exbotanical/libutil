@@ -33,7 +33,7 @@ unsigned int array_size(array_t *array);
 
 void *array_get(array_t *array, int index);
 
-array_t *array_init();
+array_t *array_init(void);
 
 bool array_includes(array_t *array, comparator_function_t *comparator,
                     void *compare_to);
