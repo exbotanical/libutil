@@ -1,4 +1,6 @@
 *.a
 *.o
+*.so
 example
 .vscode
+obj
