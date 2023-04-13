@@ -15,7 +15,8 @@ TEST_TARGET := test
 LINK_NAME := $(patsubst lib%,%,$(patsubst %.a,%, $(TARGET)))
 
 # Source files
-SRCS := $(wildcard $(SRC_DIR)/*.c) $(wildcard $(DEP_DIR)/*/*.c)
+SRCS := $(wildcard $(SRC_DIR)/*.c)
+TEST_DEPS := $(wildcard $(DEP_DIR)/*/*.c)
 
 # Object files
 OBJS := $(patsubst %.c,%.o,$(SRCS))
@@ -57,4 +58,5 @@ test: $(TARGET)
 	rm $(TEST_TARGET)
 
 .compile_test:
-	$(CC) $(CFLAGS) -D debug -I$(DEP_DIR) -I$(SRC_DIR) $(file) -o $(TEST_TARGET) -L./ -l$(LINK_NAME)
+
+	$(CC) $(CFLAGS) -D debug -I$(DEP_DIR) -I$(SRC_DIR) $(file) $(TEST_DEPS) -o $(TEST_TARGET) -L./ -l$(LINK_NAME)
