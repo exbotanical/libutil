@@ -1,5 +1,4 @@
 *.a
 *.o
 example
-deps
 .vscode
