@@ -173,3 +173,43 @@ char *s_trim(const char *s) {
 
   return scp;
 }
+
+array_t *s_split(const char *s, const char *delim) {
+  if (s == NULL || delim == NULL) {
+    return NULL;
+  }
+
+  // see:
+  // https://wiki.sei.cmu.edu/confluence/display/c/STR06-C.+Do+not+assume+that+strtok%28%29+leaves+the+parse+string+unchanged
+  char *input = s_copy(s);
+
+  array_t *tokens = array_init();
+  if (tokens == NULL) {
+    return NULL;
+  }
+
+  // If the input doesn't even contain the delimiter, return early and avoid
+  // further computation
+  if (!strstr(input, delim)) {
+    return tokens;
+  }
+
+  // If the input *is* the delimiter, just return the empty array
+  if (s_equals(input, delim)) {
+    return tokens;
+  }
+
+  char *token = strtok(input, delim);
+  if (token == NULL) {
+    return tokens;
+  }
+
+  while (token != NULL) {
+    array_push(tokens, s_copy(token));
+    token = strtok(NULL, delim);
+  }
+
+  free(input);
+
+  return tokens;
+}

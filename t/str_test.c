@@ -197,8 +197,50 @@ void test_s_copy(const char *v) {
   is(v, cp, "s_copy copies the string and does not mangle it");
 }
 
+void test_s_split_ok(void) {
+  char *test_str = "aa:b:c:d";
+  array_t *paths = s_split(test_str, ":");
+
+  ok(array_size(paths) == 4, "only the matched characters are captured");
+  is(array_get(paths, 0), "aa", "substring is captured");
+  is(array_get(paths, 1), "b", "substring is captured");
+  is(array_get(paths, 2), "c", "substring is captured");
+  is(array_get(paths, 3), "d", "substring is captured");
+
+  array_free(paths);
+}
+
+void test_s_split_no_match(void) {
+  char *test_str = "a:b:c:d";
+  array_t *paths = s_split(test_str, "/");
+
+  ok(array_size(paths) == 0, "split returns if delimiter not extant");
+
+  array_free(paths);
+}
+
+void test_s_split_empty_input(void) {
+  char *test_str = "";
+  array_t *paths = s_split(test_str, "/");
+
+  ok(array_size(paths) == 0, "split returns if input is empty");
+
+  array_free(paths);
+}
+
+void test_s_split_end_match(void) {
+  char *test_str = "a:b:c:d/test";
+  array_t *paths = s_split(test_str, "/");
+
+  ok(array_size(paths) == 2, "only the matched characters are captured");
+  is(array_get(paths, 0), "a:b:c:d", "substring is captured");
+  is(array_get(paths, 1), "test", "substring is captured");
+
+  array_free(paths);
+}
+
 int main() {
-  plan(46);
+  plan(56);
 
   test_s_copy("hello");
 
@@ -229,6 +271,11 @@ int main() {
   test_s_equals_one_null();
 
   test_s_trim();
+
+  test_s_split_ok();
+  test_s_split_no_match();
+  test_s_split_empty_input();
+  test_s_split_end_match();
 
   done_testing();
 }

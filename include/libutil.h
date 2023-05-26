@@ -204,6 +204,15 @@ bool s_nullish(const char *s);
 
 char *s_trim(const char *s);
 
+/**
+ * s_split splits a string on all instances of a delimiter.
+ *
+ * @param s The string to split
+ * @param delim The delimiter on which to split `str`
+ * @return array_t* An array of matches, if any; NULL if erroneous
+ */
+array_t *s_split(const char *s, const char *delim);
+
 #ifdef __cplusplus
 }
 #endif
