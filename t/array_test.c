@@ -19,6 +19,8 @@ void test_array_init(void) {
 
   lives_ok({ array = array_init(); }, "initializes array");
   cmp_ok(array_size(array), "==", 0, "initializes the array's length to zero");
+
+  array_free(array);
 }
 
 void test_array_size(void) {
@@ -27,6 +29,8 @@ void test_array_size(void) {
   cmp_ok(array_size(array), "==", 0, "retrieves initial size");
   array_push(array, "test");
   cmp_ok(array_size(array), "==", 1, "tracks size pointer");
+
+  array_free(array);
 }
 
 void test_array_get(void) {
@@ -44,6 +48,8 @@ void test_array_get(void) {
   cmp_ok(array_get(array, -1), "==", 12, "-1 index returns last element");
   cmp_ok(array_get(array, 1), "==", 11, "index returns correct element");
   cmp_ok(array_get(array, -2), "==", 11, "index returns correct element");
+
+  array_free(array);
 }
 
 bool include(void *el, void *compare_to) { return el == compare_to; }
@@ -55,6 +61,8 @@ void test_array_includes(void) {
          "returns true when it includes the element");
   cmp_ok(array_includes(array, include, (void *)'n'), "==", false,
          "returns false when it does not include the element");
+
+  array_free(array);
 }
 
 bool find(void *el, void *compare_to) { return el == compare_to; }
@@ -65,6 +73,8 @@ void test_array_find(void) {
          "returns index when it finds the element");
   cmp_ok(array_find(array, find, (void *)'n'), "==", -1,
          "returns -1 when it does not find the element");
+
+  array_free(array);
 }
 
 void test_array_push(void) {
@@ -80,6 +90,8 @@ void test_array_push(void) {
     cmp_ok((int)array->state[i], "==", (int)el,
            "adds the element to the end of the array");
   }
+
+  array_free(array);
 }
 
 void test_array_pop(void) {
@@ -96,6 +108,8 @@ void test_array_pop(void) {
     cmp_ok((int)((__array_t *)array)->len, "==", i - 1,
            "decreases the array's length by one");
   }
+
+  array_free(array);
 }
 
 void test_array_pop_empty(void) {
@@ -111,6 +125,8 @@ void test_array_pop_empty(void) {
   }
 
   is(array_pop(array), NULL, "returns NULL from an empty array");
+
+  array_free(array);
 }
 
 void test_array_shift(void) {
@@ -133,12 +149,16 @@ void test_array_shift(void) {
 
   cmp_ok((int)array_shift(array), "==", 'z');
   cmp_ok(internal->len, "==", 0);
+
+  array_free(array);
 }
 
 void test_array_shift_empty(void) {
   array_t *array = array_init();
 
   is(array_shift(array), NULL, "shift on an empty array returns NULL");
+
+  array_free(array);
 }
 
 void test_array_slice(void) {
@@ -151,6 +171,9 @@ void test_array_slice(void) {
     cmp_ok((int)sliced->state[i], "==", (int)((__array_t *)array)->state[i + 1],
            "contains the sliced elements");
   }
+
+  array_free(array);
+  array_free(sliced);  // TODO: docs, which fns free/replace, which do not/dupe
 }
 
 void test_array_remove(void) {
@@ -165,6 +188,8 @@ void test_array_remove(void) {
     cmp_ok((int)internal->state[i], "==", values[i],
            "contains all elements except for removed");
   }
+
+  array_free(array);
 }
 
 void test_array_remove_not_found(void) {
@@ -172,6 +197,8 @@ void test_array_remove_not_found(void) {
 
   cmp_ok(array_remove(array, 12), "==", false,
          "returns false when the element was not removed");
+
+  array_free(array);
 }
 
 #define MAPPER_INC 10
@@ -192,6 +219,9 @@ void test_array_map(void) {
            "==", (int)internal->state[i] + MAPPER_INC,
            "applies the function to each element");
   }
+
+  array_free(array);
+  array_free(transformed);
 }
 
 bool filter(void *el, unsigned int index, array_t *array, void *compare_to) {
@@ -211,6 +241,9 @@ void test_array_filter(void) {
              "includes only elements that match the filter condition");
     }
   }
+
+  array_free(array);
+  array_free(transformed);
 }
 
 void test_foreach_macro(void) {
@@ -227,10 +260,12 @@ void test_foreach_macro(void) {
   foreach_i(array, x, 1) { count += 1; }
 
   ok(2 == count, "starts at the provided count");
+
+  array_free(array);
 }
 
 void test_has_elements_macro(void) {
-  array_t *array;
+  array_t *array = NULL;
 
   lives_ok(
       { has_elements(array); },
@@ -250,6 +285,8 @@ void test_has_elements_macro(void) {
      "has_elements returns true when arr has elements");
   ok((!has_elements(array)) == 0,
      "negated has_elements returns false when arr has elements");
+
+  array_free(array);
 }
 
 void test_array_collect(void) {
@@ -260,6 +297,8 @@ void test_array_collect(void) {
   is("a", array_get(collected, 0), "has the expected element");
   is("b", array_get(collected, 1), "has the expected element");
   is("c", array_get(collected, 2), "has the expected element");
+
+  array_free(collected);
 }
 
 int main() {

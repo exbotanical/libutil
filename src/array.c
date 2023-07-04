@@ -25,23 +25,22 @@ void *array_get(array_t *array, int index) {
 }
 
 array_t *array_init(void) {
-  array_t *array = malloc(sizeof(array_t));
+  __array_t *array = malloc(sizeof(__array_t));
   if (!array) {
     errno = ENOMEM;
     return NULL;
   }
 
-  __array_t *internal = (__array_t *)array;
-
-  internal->state = malloc(sizeof(void *));
-  if (!internal->state) {
+  array->state = malloc(sizeof(void *));
+  if (!array->state) {
+    free(array);
     errno = ENOMEM;
     return NULL;
   }
 
-  internal->len = 0;
+  array->len = 0;
 
-  return array;
+  return (array_t *)array;
 }
 
 array_t *__array_collect(void *v, ...) {
@@ -136,8 +135,12 @@ void *array_shift(array_t *array) {
     array_push(new, internal->state[i]);
   }
 
+  free(internal->state);
+
+  internal->state = ((__array_t *)new)->state;  // Assign the new state
   internal->len--;
-  *array = *new;
+
+  free(new);
   return el;
 }
 
