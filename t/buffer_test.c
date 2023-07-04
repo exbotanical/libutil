@@ -20,6 +20,8 @@ void test_buffer_size(void) {
 
   buffer_append(buf, "hello");
   cmp_ok(buffer_size(buf), "==", 5, "retrieves updated size");
+
+  buffer_free(buf);
 }
 
 void test_buffer_state(void) {
@@ -30,6 +32,8 @@ void test_buffer_state(void) {
 
   buffer_append(buf, v);
   is(buffer_state(buf), v, "initial state is %s", v);
+
+  buffer_free(buf);
 }
 
 void test_buffer_init_with_initial(void) {
@@ -74,7 +78,7 @@ void test_buffer_append_with(void) {
 
   char *expected = "abcdefghij12345abcdefghij";
 
-  is(((__buffer_t *)buf)->state, expected,
+  ok(strcmp(buffer_state(buf), expected) == 0,
      "buffer contains all appended characters in order");
   unsigned int expected_len = strlen(expected);
   ok(((__buffer_t *)buf)->len == expected_len, "buffer's length is %d",
