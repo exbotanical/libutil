@@ -215,3 +215,10 @@ void array_free(array_t *array) {
   internal->state = NULL;
   free(internal);
 }
+
+void array_free_ptrs(array_t *array) {
+  foreach (array, i) {
+    free(array_get(array, i));
+  }
+  array_free(array);
+}

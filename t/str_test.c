@@ -7,6 +7,8 @@ void test_s_truncate_begin(void) {
   is(ret, " world",
      "truncates the given string from the beginning by the specified number of "
      "characters");
+
+  free(ret);
 }
 
 void test_s_truncate_end(void) {
@@ -15,35 +17,49 @@ void test_s_truncate_end(void) {
   is(ret, "hello ",
      "truncates the given string from the end by the specified number of "
      "characters");
+
+  free(ret);
 }
 
 void test_s_truncate(void) {
   char *file_path = "./routes/hello.c";
-  char *ret = s_truncate(s_truncate(file_path, -2), 2);
+  char *intermediate = s_truncate(file_path, -2);
+  char *ret = s_truncate(intermediate, 2);
   is(ret, "routes/hello", "truncates from both ends correctly");
+
+  free(intermediate);
+  free(ret);
 }
 
 void test_s_truncate_too_long(void) {
   char *string = "hello world";
   char *ret = s_truncate(string, 15);
   is(ret, string, "returns the given string as-is");
+
+  free(ret);
 }
 
 void test_s_truncate_zero(void) {
   char *string = "hello world";
   char *ret = s_truncate(string, 0);
   is(ret, string, "returns the given string as-is");
+
+  free(ret);
 }
 
 void test_s_truncate_too_short(void) {
   char *string = "hello world";
   char *ret = s_truncate(string, -15);
   is(ret, string, "returns the given string as-is");
+
+  free(ret);
 }
 
 void test_s_concat(void) {
   char *ret = s_concat("hello", " world");
   is(ret, "hello world", "concatenates the provided strings");
+
+  free(ret);
 }
 
 void test_s_indexof_ok(void) {
@@ -64,8 +80,9 @@ void test_s_substr_ok(void) {
   char *test_str = "test_str";
 
   char *substring = s_substr(test_str, 4, 6, false);
-
   is(substring, "_s", "substring matches");
+
+  free(substring);
 }
 
 void test_s_substr_inclusive(void) {
@@ -74,6 +91,8 @@ void test_s_substr_inclusive(void) {
   char *substring = s_substr(test_str, 4, 6, true);
 
   is(substring, "_st", "inclusive substring matches");
+
+  free(substring);
 }
 
 void test_s_substr_no_range(void) {
@@ -82,6 +101,8 @@ void test_s_substr_no_range(void) {
   char *substring = s_substr(test_str, 1, 1, false);
 
   is(substring, NULL, "substring sans range yields empty string");
+
+  free(substring);
 }
 
 void test_s_substr_no_range_inclusive(void) {
@@ -91,6 +112,8 @@ void test_s_substr_no_range_inclusive(void) {
 
   is(substring, "e",
      "inclusive substring sans range yields char at start index");
+
+  free(substring);
 }
 
 void test_s_casecmp(void) {
@@ -125,11 +148,15 @@ void test_s_upper(void) {
   char *ret = s_upper("hello");
   is(expected, ret, "upper-cases the string");
 
+  free(ret);
   ret = s_upper("HELLO");
   is(expected, ret, "upper-cases an already upper-cased string");
 
+  free(ret);
   ret = s_upper("hEllO");
   is(expected, ret, "upper-cases a partially upper-cased str");
+
+  free(ret);
 }
 
 void test_s_equals(void) {
@@ -172,29 +199,52 @@ void test_s_nullish(void) {
 }
 
 void test_s_trim(void) {
-  is("cookie", s_trim(" cookie "),
+  char *ptr;
+  is("cookie", (ptr = s_trim(" cookie ")),
      "trims a string with whitespace on either side");
-  is("cookie", s_trim("cookie "),
-     "trims a string with whitespace at the end only");
-  is("cookie", s_trim(" cookie"),
-     "trims a string with whitespace at the start only");
-  is("cookie", s_trim("cookie"), "returns a string as-is when no whitespace");
-  is("", s_trim(""), "returns a string as-is when empty");
-  is("", s_trim("  "), "returns an empty string when only whitespace");
+  free(ptr);
 
-  is("cookie", s_trim("\tcookie\t"),
+  is("cookie", (ptr = s_trim("cookie ")),
+     "trims a string with whitespace at the end only");
+  free(ptr);
+
+  is("cookie", (ptr = s_trim(" cookie")),
+     "trims a string with whitespace at the start only");
+  free(ptr);
+
+  is("cookie", (ptr = s_trim("cookie")),
+     "returns a string as-is when no whitespace");
+  free(ptr);
+
+  is("", (ptr = s_trim("")), "returns a string as-is when empty");
+  free(ptr);
+
+  is("", (ptr = s_trim("  ")), "returns an empty string when only whitespace");
+  free(ptr);
+
+  is("cookie", (ptr = s_trim("\tcookie\t")),
      "trims a string with ascii space on either side");
-  is("cookie", s_trim("cookie\n"),
+  free(ptr);
+
+  is("cookie", (ptr = s_trim("cookie\n")),
      "trims a string with ascii space at the end only");
-  is("cookie", s_trim("\rcookie"),
+  free(ptr);
+
+  is("cookie", (ptr = s_trim("\rcookie")),
      "trims a string with ascii space at the start only");
-  is("", s_trim("\t\t\t\r\n"), "returns an empty string when all ascii space");
+  free(ptr);
+
+  is("", (ptr = s_trim("\t\t\t\r\n")),
+     "returns an empty string when all ascii space");
+  free(ptr);
 }
 
-void test_s_copy(const char *v) {
+void test_s_copy(void) {
+  const char *v = "hello";
   char *cp = s_copy(v);
-
   is(v, cp, "s_copy copies the string and does not mangle it");
+
+  free(cp);
 }
 
 void test_s_split_ok(void) {
@@ -207,7 +257,7 @@ void test_s_split_ok(void) {
   is(array_get(paths, 2), "c", "substring is captured");
   is(array_get(paths, 3), "d", "substring is captured");
 
-  array_free(paths);
+  array_free_ptrs(paths);
 }
 
 void test_s_split_no_match(void) {
@@ -242,7 +292,7 @@ void test_s_split_end_match(void) {
 int main() {
   plan(56);
 
-  test_s_copy("hello");
+  test_s_copy();
 
   test_s_truncate_begin();
   test_s_truncate_end();

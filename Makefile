@@ -62,11 +62,17 @@ clean:
 	rm -f $(OBJ) $(STATIC_TARGET) $(DYNAMIC_TARGET) $(EXAMPLE_TARGET) $(TEST_TARGET)
 
 test: $(STATIC_TARGET)
-	$(foreach test,$(TESTS),					  																											\
-		$(MAKE) .compile_test file=$(test); 																										\
-		printf "\033[1;32m\nRunning test $(patsubst $(TESTDIR)/%,%,$(test))...\n$(SEPARATOR)\n\033[0m";	\
-		./test;\
+	$(foreach test,$(TESTS),					  				\
+		$(MAKE) .compile_test file=$(test); 			\
+		./test;																		\
  	)
+	rm $(TEST_TARGET)
+
+valgrind: $(STATIC_TARGET)
+	$(foreach test,$(TESTS),					  												\
+		$(MAKE) .compile_test file=$(test); 											\
+		valgrind --leak-check=full --track-origins=yes -s ./test  \
+	)
 	rm $(TEST_TARGET)
 
 .compile_test:

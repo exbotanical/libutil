@@ -60,6 +60,8 @@ void array_foreach(array_t *array, callback_function_t *callback);
 
 void array_free(array_t *array);
 
+void array_free_ptrs(array_t *array);
+
 unsigned int array_size(array_t *array);
 
 array_t *__array_collect(void *v, ...);
