@@ -14,12 +14,12 @@ void test_buffer_init(void) {
   buffer_free(buf);
 }
 
-void test_buffer_size(void) {
+void test_buffer_len(void) {
   buffer_t *buf = buffer_init(NULL);
-  cmp_ok(buffer_size(buf), "==", 0, "retrieves initial size");
+  cmp_ok(buffer_len(buf), "==", 0, "retrieves initial size");
 
   buffer_append(buf, "hello");
-  cmp_ok(buffer_size(buf), "==", 5, "retrieves updated size");
+  cmp_ok(buffer_len(buf), "==", 5, "retrieves updated size");
 
   buffer_free(buf);
 }
@@ -131,7 +131,7 @@ int main() {
   test_buffer_free();
   test_buffer_free_nonnull();
   test_buffer_init();
-  test_buffer_size();
+  test_buffer_len();
   test_buffer_state();
   test_buffer_init_with_initial();
   test_buffer_append();

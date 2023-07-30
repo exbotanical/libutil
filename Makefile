@@ -64,14 +64,14 @@ clean:
 test: $(STATIC_TARGET)
 	$(foreach test,$(TESTS),					  				\
 		$(MAKE) .compile_test file=$(test); 			\
-		./test;																		\
+		./$(TEST_TARGET);													\
  	)
 	rm $(TEST_TARGET)
 
 valgrind: $(STATIC_TARGET)
-	$(foreach test,$(TESTS),					  												\
-		$(MAKE) .compile_test file=$(test); 											\
-		valgrind --leak-check=full --track-origins=yes -s ./test  \
+	$(foreach test,$(TESTS),					  																	\
+		$(MAKE) .compile_test file=$(test); 																\
+		valgrind --leak-check=full --track-origins=yes -s ./$(TEST_TARGET)  \
 	)
 	rm $(TEST_TARGET)
 
@@ -81,4 +81,4 @@ valgrind: $(STATIC_TARGET)
 lint:
 	$(LINTER) -i $(wildcard $(SRCDIR)/*) $(wildcard $(TESTDIR)/*) $(wildcard $(LINCDIR)/*) $(wildcard $(EXAMPLEDIR)/*)
 
-.PHONY: clean test .compile_test all obj install uninstall lint
+.PHONY: clean test .compile_test all obj install uninstall lint valgrind

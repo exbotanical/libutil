@@ -1,4 +1,5 @@
 # TODOs
 
-- [ ] documentation
-- [ ] doxygen comments
+- [x] documentation
+- [ ] docs site
+- [ ] ~~doxygen comments~~

@@ -52,29 +52,29 @@ void test_array_get(void) {
   array_free(array);
 }
 
-bool include(void *el, void *compare_to) { return el == compare_to; }
-
 void test_array_includes(void) {
   array_t *array = make_test_array();
 
-  cmp_ok(array_includes(array, include, (void *)'z'), "==", true,
+  cmp_ok(array_includes(array, int_comparator, 'z'), "==", true,
          "returns true when it includes the element");
-  cmp_ok(array_includes(array, include, (void *)'n'), "==", false,
+  cmp_ok(array_includes(array, int_comparator, 'n'), "==", false,
          "returns false when it does not include the element");
 
   array_free(array);
 }
 
-bool find(void *el, void *compare_to) { return el == compare_to; }
-
 void test_array_find(void) {
   array_t *array = make_test_array();
-  cmp_ok((int)array_find(array, find, (void *)'z'), "==", 2,
+  cmp_ok((int)array_find(array, int_comparator, 'z'), "==", 2,
          "returns index when it finds the element");
-  cmp_ok(array_find(array, find, (void *)'n'), "==", -1,
+  cmp_ok(array_find(array, int_comparator, 'n'), "==", -1,
          "returns -1 when it does not find the element");
 
   array_free(array);
+
+  array_t *strarr = array_collect("92Q", "dew");
+  cmp_ok((int)array_find(array, str_comparator, "dew"), "==", 1,
+         "returns index when it finds the string element");
 }
 
 void test_array_push(void) {
@@ -173,7 +173,7 @@ void test_array_slice(void) {
   }
 
   array_free(array);
-  array_free(sliced);  // TODO: docs, which fns free/replace, which do not/dupe
+  array_free(sliced);
 }
 
 void test_array_remove(void) {
@@ -234,7 +234,7 @@ void test_array_filter(void) {
       (__array_t *)array_filter(array, filter, (void *)'A');
   cmp_ok(transformed->len, "==", 3, "has a length of filtered elements only");
   for (unsigned int i = 0; i < transformed->len; i++) {
-    void *el = transformed->state[i];
+    void *el = array_get(array, i);
 
     if ((int)el > 'A') {
       cmp_ok((int)transformed->state[i], "==", (int)el,
@@ -302,7 +302,7 @@ void test_array_collect(void) {
 }
 
 int main() {
-  plan(76);
+  plan(77);
 
   test_array_init();
   test_array_size();

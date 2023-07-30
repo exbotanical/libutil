@@ -4,7 +4,7 @@
 
 #include "libutil.h"
 
-int buffer_size(buffer_t *buf) { return ((__buffer_t *)buf)->len; }
+int buffer_len(buffer_t *buf) { return ((__buffer_t *)buf)->len; }
 
 char *buffer_state(buffer_t *buf) { return ((__buffer_t *)buf)->state; }
 

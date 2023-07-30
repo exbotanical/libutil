@@ -4,6 +4,9 @@
 
 #include "libutil.h"
 
+bool int_comparator(int a, int b) { return a == b; }
+bool str_comparator(char *a, char *b) { return s_equals(a, b); }
+
 unsigned int array_size(array_t *array) { return ((__array_t *)array)->len; }
 
 void *array_get(array_t *array, int index) {
@@ -59,7 +62,7 @@ array_t *__array_collect(void *v, ...) {
   return arr;
 }
 
-bool array_includes(array_t *array, comparator_function_t *comparator,
+bool array_includes(array_t *array, comparator_t *comparator,
                     void *compare_to) {
   __array_t *internal = (__array_t *)array;
 
@@ -72,8 +75,7 @@ bool array_includes(array_t *array, comparator_function_t *comparator,
   return false;
 }
 
-int array_find(array_t *array, comparator_function_t *comparator,
-               void *compare_to) {
+int array_find(array_t *array, comparator_t *comparator, void *compare_to) {
   __array_t *internal = (__array_t *)array;
 
   for (unsigned int i = 0; i < internal->len; i++) {
@@ -174,7 +176,7 @@ bool array_remove(array_t *array, unsigned int index) {
   return true;
 }
 
-array_t *array_map(array_t *array, callback_function_t *callback) {
+array_t *array_map(array_t *array, callback_t *callback) {
   __array_t *internal = (__array_t *)array;
 
   array_t *ret = array_init();
@@ -185,7 +187,7 @@ array_t *array_map(array_t *array, callback_function_t *callback) {
   return ret;
 }
 
-array_t *array_filter(array_t *array, predicate_function_t *predicate,
+array_t *array_filter(array_t *array, predicate_t *predicate,
                       void *compare_to) {
   __array_t *internal = (__array_t *)array;
 
@@ -200,7 +202,7 @@ array_t *array_filter(array_t *array, predicate_function_t *predicate,
   return ret;
 }
 
-void array_foreach(array_t *array, callback_function_t *callback) {
+void array_foreach(array_t *array, callback_t *callback) {
   __array_t *internal = (__array_t *)array;
 
   for (unsigned int i = 0; i < internal->len; i++) {
