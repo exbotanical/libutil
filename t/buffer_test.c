@@ -3,6 +3,7 @@
 
 #include "libutil.h"
 #include "tap.c/tap.h"
+#include "tests.h"
 
 void test_buffer_init(void) {
   buffer_t *buf = buffer_init(NULL);
@@ -125,9 +126,7 @@ void test_buffer_free_nonnull(void) {
   lives_ok({ buffer_free(buf); }, "frees the buffer's memory");
 }
 
-int main() {
-  plan(17);
-
+void run_buffer_tests(void) {
   test_buffer_free();
   test_buffer_free_nonnull();
   test_buffer_init();
@@ -138,6 +137,4 @@ int main() {
   test_buffer_append_with();
   test_buffer_concat();
   test_buffer_concat_on_null();
-
-  done_testing();
 }

@@ -40,7 +40,8 @@ bool buffer_append(buffer_t *buf, const char *s) {
     return false;
   }
 
-  memcpy(&next[internal->len], s, len + 1);
+  memcpy(&next[internal->len], s, len);
+  next[internal->len + len] = '\0';
   internal->state = next;
   internal->len += len;
 
@@ -50,12 +51,13 @@ bool buffer_append(buffer_t *buf, const char *s) {
 bool buffer_append_with(buffer_t *buf, const char *s, unsigned int len) {
   __buffer_t *internal = (__buffer_t *)buf;
 
-  char *next = realloc(internal->state, internal->len + len);
+  char *next = realloc(internal->state, internal->len + len + 1);
   if (!next) {
     return false;
   }
 
   memcpy(&next[internal->len], s, len);
+  next[internal->len + len] = '\0';
   internal->state = next;
   internal->len += len;
 

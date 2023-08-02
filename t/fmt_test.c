@@ -1,5 +1,6 @@
 #include "libutil.h"
 #include "tap.c/tap.h"
+#include "tests.h"
 
 void test_fmt_str(void) {
   char *formatted = fmt_str("%s %d %s", "test", 11, "string");
@@ -8,10 +9,4 @@ void test_fmt_str(void) {
   free(formatted);
 }
 
-int main() {
-  plan(1);
-
-  test_fmt_str();
-
-  done_testing();
-}
+void run_fmt_tests(void) { test_fmt_str(); }

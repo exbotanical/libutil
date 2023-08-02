@@ -1,5 +1,6 @@
 #include "libutil.h"
 #include "tap.c/tap.h"
+#include "tests.h"
 
 void test_s_truncate_begin(void) {
   char *string = "hello world";
@@ -286,12 +287,10 @@ void test_s_split_end_match(void) {
   is(array_get(paths, 0), "a:b:c:d", "substring is captured");
   is(array_get(paths, 1), "test", "substring is captured");
 
-  array_free(paths);
+  array_free_ptrs(paths);
 }
 
-int main() {
-  plan(56);
-
+void run_str_tests(void) {
   test_s_copy();
 
   test_s_truncate_begin();
@@ -326,6 +325,4 @@ int main() {
   test_s_split_no_match();
   test_s_split_empty_input();
   test_s_split_end_match();
-
-  done_testing();
 }

@@ -2,6 +2,7 @@
 
 #include "libutil.h"
 #include "tap.c/tap.h"
+#include "tests.h"
 
 array_t *make_test_array(void) {
   array_t *array = array_init();
@@ -73,8 +74,10 @@ void test_array_find(void) {
   array_free(array);
 
   array_t *strarr = array_collect("92Q", "dew");
-  cmp_ok((int)array_find(array, str_comparator, "dew"), "==", 1,
+  cmp_ok((int)array_find(strarr, str_comparator, "dew"), "==", 1,
          "returns index when it finds the string element");
+
+  array_free(strarr);
 }
 
 void test_array_push(void) {
@@ -301,9 +304,7 @@ void test_array_collect(void) {
   array_free(collected);
 }
 
-int main() {
-  plan(77);
-
+void run_array_tests(void) {
   test_array_init();
   test_array_size();
   test_array_get();
@@ -324,6 +325,4 @@ int main() {
   test_foreach_macro();
   test_has_elements_macro();
   test_array_collect();
-
-  done_testing();
 }
