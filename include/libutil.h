@@ -172,9 +172,9 @@ typedef struct {
 typedef __buffer_t *buffer_t;
 
 /**
- * buffer_len returns the length of the buffer.
+ * buffer_size returns the length of the buffer.
  */
-int buffer_len(buffer_t *buf);
+int buffer_size(buffer_t *buf);
 
 /**
  * buffer_state returns the internal state of the buffer.
