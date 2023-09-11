@@ -152,8 +152,14 @@ array_t *array_filter(array_t *array, predicate_t *predicate, void *compare_to);
 void array_foreach(array_t *array, callback_t *callback);
 
 /**
- * array_free frees the array and its internal state container. Safe to use with
- * an array of primitives.
+ * array_concat concatenates two arrays, returning a new array of [...arr1,
+ * ...arr2]. The original arrays are not modified.
+ */
+array_t *array_concat(array_t *arr1, array_t *arr2);
+
+/**
+ * array_free frees the array and its internal state container. Safe to use
+ * with an array of primitives.
  */
 void array_free(array_t *array);
 

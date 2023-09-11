@@ -304,6 +304,20 @@ void test_array_collect(void) {
   array_free(collected);
 }
 
+void test_array_concat(void) {
+  char *v[6] = {"a", "b", "c", "x", "y", "z"};
+
+  array_t *arr1 = array_collect(v[0], v[1], v[2]);
+  array_t *arr2 = array_collect(v[3], v[4], v[5]);
+
+  array_t *concatenated = array_concat(arr1, arr2);
+
+  ok(array_size(concatenated) == 6, "has the expected size");
+  foreach (concatenated, i) {
+    is(array_get(concatenated, i), v[i], "contains %s at index %d", v[i], i);
+  }
+}
+
 void run_array_tests(void) {
   test_array_init();
   test_array_size();
@@ -320,6 +334,7 @@ void run_array_tests(void) {
   test_array_map();
   test_array_filter();
   test_array_find();
+  test_array_concat();
 
   // macros
   test_foreach_macro();

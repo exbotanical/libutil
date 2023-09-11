@@ -210,6 +210,28 @@ void array_foreach(array_t *array, callback_t *callback) {
   }
 }
 
+array_t *array_concat(array_t *arr1, array_t *arr2) {
+  __array_t *internal1 = (__array_t *)arr1;
+  __array_t *internal2 = (__array_t *)arr2;
+
+  __array_t *result = (__array_t *)array_init();
+
+  result->state = realloc(result->state,
+                          (internal1->len + internal2->len) * sizeof(void *));
+  if (!result->state) {
+    errno = ENOMEM;
+    return NULL;
+  }
+
+  result->len = internal1->len + internal2->len;
+
+  memcpy(result->state, internal1->state, internal1->len * sizeof(void *));
+  memcpy(result->state + internal1->len, internal2->state,
+         internal2->len * sizeof(void *));
+
+  return (array_t *)result;
+}
+
 void array_free(array_t *array) {
   __array_t *internal = (__array_t *)array;
 
