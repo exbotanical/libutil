@@ -91,6 +91,9 @@ int array_find(array_t *array, comparator_t *comparator, void *compare_to) {
 bool array_push(array_t *array, void *el) {
   __array_t *internal = (__array_t *)array;
 
+  // only realloc every n (multiplicative factor)
+  // and use a capacity (invariant: capacity >= size)
+  // so we avoid 0(n^2) every push
   void **next_state =
       realloc(internal->state, (internal->len + 1) * sizeof(void *));
   if (!next_state) {
