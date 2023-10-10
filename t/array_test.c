@@ -89,7 +89,7 @@ void test_array_push(void) {
 
     cmp_ok(array_push((array_t *)array, el), "==", true,
            "returns true when successful");
-    cmp_ok(array->len, "==", i + 1, "increases the array's length by one");
+    cmp_ok(array->size, "==", i + 1, "increases the array's length by one");
     cmp_ok((int)array->state[i], "==", (int)el,
            "adds the element to the end of the array");
   }
@@ -108,7 +108,7 @@ void test_array_pop(void) {
   for (; i > 0; i--) {
     cmp_ok((int)array_pop(array), "==", values[i - 1],
            "removes the element from the end of the array");
-    cmp_ok((int)((__array_t *)array)->len, "==", i - 1,
+    cmp_ok((int)((__array_t *)array)->size, "==", i - 1,
            "decreases the array's length by one");
   }
 
@@ -142,16 +142,16 @@ void test_array_shift(void) {
   }
 
   cmp_ok((int)array_shift(array), "==", 'x');
-  cmp_ok(internal->len, "==", 2);
+  cmp_ok(internal->size, "==", 2);
   cmp_ok((int)internal->state[0], "==", 'y');
   cmp_ok((int)internal->state[1], "==", 'z');
 
   cmp_ok((int)array_shift(array), "==", 'y');
-  cmp_ok((int)internal->len, "==", 1);
+  cmp_ok((int)internal->size, "==", 1);
   cmp_ok((int)internal->state[0], "==", 'z');
 
   cmp_ok((int)array_shift(array), "==", 'z');
-  cmp_ok(internal->len, "==", 0);
+  cmp_ok(internal->size, "==", 0);
 
   array_free(array);
 }
@@ -168,7 +168,7 @@ void test_array_slice(void) {
   array_t *array = make_test_array();
   __array_t *sliced = (__array_t *)array_slice(array, 1, 4);
 
-  cmp_ok(sliced->len, "==", 3, "slices the range of elements inclusively");
+  cmp_ok(sliced->size, "==", 3, "slices the range of elements inclusively");
 
   for (unsigned int i = 0; i < 3; i++) {
     cmp_ok((int)sliced->state[i], "==", (int)((__array_t *)array)->state[i + 1],
@@ -187,7 +187,7 @@ void test_array_remove(void) {
          "returns true when the element was removed");
 
   char values[] = {'x', 'y', '1', '2', '3'};
-  for (unsigned int i = 0; i < internal->len; i++) {
+  for (unsigned int i = 0; i < internal->size; i++) {
     cmp_ok((int)internal->state[i], "==", values[i],
            "contains all elements except for removed");
   }
@@ -214,7 +214,7 @@ void test_array_map(void) {
   __array_t *internal = (__array_t *)array;
 
   __array_t *transformed = (__array_t *)array_map(array, mapper);
-  cmp_ok(transformed->len, "==", internal->len,
+  cmp_ok(transformed->size, "==", internal->size,
          "has the same length as the input array");
 
   for (unsigned int i = 0; i < 3; i++) {
@@ -235,8 +235,8 @@ void test_array_filter(void) {
 
   __array_t *transformed =
       (__array_t *)array_filter(array, filter, (void *)'A');
-  cmp_ok(transformed->len, "==", 3, "has a length of filtered elements only");
-  for (unsigned int i = 0; i < transformed->len; i++) {
+  cmp_ok(transformed->size, "==", 3, "has a length of filtered elements only");
+  for (unsigned int i = 0; i < transformed->size; i++) {
     void *el = array_get(array, i);
 
     if ((int)el > 'A') {
@@ -318,6 +318,15 @@ void test_array_concat(void) {
   }
 }
 
+void test_array_realloc_sanity(void) {
+  void *v = "value";
+
+  array_t *arr = array_init();
+  for (int i = 0; i < 20; i++) {
+    array_push(arr, v);
+  }
+}
+
 void run_array_tests(void) {
   test_array_init();
   test_array_size();
@@ -335,6 +344,7 @@ void run_array_tests(void) {
   test_array_filter();
   test_array_find();
   test_array_concat();
+  test_array_realloc_sanity();
 
   // macros
   test_foreach_macro();

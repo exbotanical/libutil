@@ -8,9 +8,14 @@ extern "C" {
 #include <stdbool.h>
 #include <stddef.h>
 
+#ifndef LIB_UTIL_ARRAY_CAPACITY_INCR
+#define LIB_UTIL_ARRAY_CAPACITY_INCR 4
+#endif
+
 typedef struct {
   void **state;
-  unsigned int len;
+  unsigned int size;
+  unsigned int capacity;
 } __array_t;
 
 /**
@@ -102,6 +107,11 @@ int array_find(array_t *array, comparator_t *comparator, void *compare_to);
 
 /**
  * array_push appends the given element to the end of the array.
+ *
+ * Set the `LIB_UTIL_ARRAY_CAPACITY_INCR` macro if you want to change the
+ * default capacity incrementor. i.e. if using the default (4), the array
+ * reallocates memory every 4 elements. If you know you'll be using more, you
+ * can increase this amount and maintain a more performant array.
  */
 bool array_push(array_t *array, void *el);
 
