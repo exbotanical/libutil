@@ -61,7 +61,7 @@ $(EXAMPLE_TARGET): $(STATIC_TARGET)
 clean:
 	rm -f $(OBJ) $(STATIC_TARGET) $(DYNAMIC_TARGET) $(EXAMPLE_TARGET) $(TEST_TARGET)
 
-test: $(STATIC_TARGET)
+unit_test: $(STATIC_TARGET)
 	$(CC) $(TESTS) $(wildcard $(DEPSDIR)/tap.c/*.c) $(STATIC_TARGET) -I$(LINCDIR) -I$(SRCDIR) -I$(DEPSDIR) $(LIBS) -o $(TEST_TARGET)
 	./$(TEST_TARGET)
 	$(MAKE) clean
