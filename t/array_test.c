@@ -327,6 +327,15 @@ void test_array_realloc_sanity(void) {
   }
 }
 
+// bug fix
+void test_array_get_negative_idx(void) {
+  array_t *arr = array_init();
+  array_push(arr, "x");
+
+  is(array_get(arr, -1), "x",
+     "retrieves the last (and only) element given index -1");
+}
+
 void run_array_tests(void) {
   test_array_init();
   test_array_size();
@@ -345,6 +354,7 @@ void run_array_tests(void) {
   test_array_find();
   test_array_concat();
   test_array_realloc_sanity();
+  test_array_get_negative_idx();
 
   // macros
   test_foreach_macro();

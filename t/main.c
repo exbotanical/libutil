@@ -2,7 +2,7 @@
 #include "tests.h"
 
 int main() {
-  plan(158);
+  plan(159);
 
   run_array_tests();
   run_buffer_tests();

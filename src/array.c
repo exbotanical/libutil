@@ -17,7 +17,7 @@ void *array_get(array_t *array, int index) {
   }
 
   unsigned int absolute = abs(index);
-  if (absolute >= internal->size) {
+  if (absolute > internal->size) {
     return NULL;
   }
 
