@@ -1,6 +1,6 @@
 {
   "name": "libutil",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "author": "Matthew Zito",
   "repo": "exbotanical/libutil",
   "license": "MIT",
@@ -13,6 +13,8 @@
     "src/fmt.c",
     "src/str.c"
   ],
+  "install": "make install",
+  "uninstall": "make uninstall",
   "development": {
     "thlorenz/tap.c": "*"
   }

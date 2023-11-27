@@ -157,11 +157,10 @@ array_t *array_slice(array_t *array, unsigned start, int end) {
   __array_t *internal = (__array_t *)array;
   array_t *slice = array_init();
 
-  // TODO: test -1
+  // TODO: fix negative end beyond -1
   unsigned int normalized_end = end == -1 ? (int)internal->size : end;
   if (end > (int)internal->size) {
-    printf("TODO:\n");
-    return;
+    return NULL;
   }
 
   for (unsigned int i = start; i < normalized_end; i++) {

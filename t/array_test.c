@@ -179,6 +179,21 @@ void test_array_slice(void) {
   array_free(sliced);
 }
 
+void test_array_slice_negative(void) {
+  array_t *array = make_test_array();
+  __array_t *sliced = (__array_t *)array_slice(array, 1, -1);
+
+  cmp_ok(sliced->size, "==", 5, "slices the range of elements inclusively");
+
+  for (unsigned int i = 0; i < 5; i++) {
+    cmp_ok((int)sliced->state[i], "==", (int)((__array_t *)array)->state[i + 1],
+           "contains the sliced elements");
+  }
+
+  array_free(array);
+  array_free(sliced);
+}
+
 void test_array_remove(void) {
   array_t *array = make_test_array();
   __array_t *internal = (__array_t *)array;
@@ -334,6 +349,12 @@ void test_array_get_negative_idx(void) {
 
   is(array_get(arr, -1), "x",
      "retrieves the last (and only) element given index -1");
+
+  array_push(arr, "y");
+
+  is(array_get(arr, -1), "y", "retrieves the new last element given index -1");
+  is(array_get(arr, -2), "x",
+     "retrieves the penultimate element given index -2");
 }
 
 void run_array_tests(void) {
@@ -347,6 +368,7 @@ void run_array_tests(void) {
   test_array_shift();
   test_array_shift_empty();
   test_array_slice();
+  test_array_slice_negative();
   test_array_remove();
   test_array_remove_not_found();
   test_array_map();
