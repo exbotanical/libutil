@@ -229,7 +229,7 @@ void buffer_free(buffer_t *buf);
 /**
  * Returns a formatted string. Uses printf syntax.
  */
-char *fmt_str(char *fmt, ...);
+char *s_fmt(char *fmt, ...);
 
 /**
  * s_truncate truncates the given string `s` by `n` characters.

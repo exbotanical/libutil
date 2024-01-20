@@ -1,18 +1,12 @@
 {
   "name": "libutil",
-  "version": "0.0.13",
+  "version": "0.1.13",
   "author": "Matthew Zito",
   "repo": "exbotanical/libutil",
   "license": "MIT",
   "description": "A library of useful C utilities with JavaScript-like array, buffer, and string APIs",
   "keywords": ["array", "buffer", "formatting", "utilities", "helpers"],
-  "src": [
-    "include/libutil.h",
-    "src/array.c",
-    "src/buffer.c",
-    "src/fmt.c",
-    "src/str.c"
-  ],
+  "src": ["include/libutil.h", "src/array.c", "src/buffer.c", "src/str.c"],
   "install": "make install",
   "uninstall": "make uninstall",
   "development": {

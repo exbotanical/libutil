@@ -6,7 +6,6 @@ int main() {
 
   run_array_tests();
   run_buffer_tests();
-  run_fmt_tests();
   run_str_tests();
 
   done_testing();

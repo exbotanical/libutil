@@ -290,6 +290,13 @@ void test_s_split_end_match(void) {
   array_free_ptrs(paths);
 }
 
+void test_s_fmt(void) {
+  char *formatted = s_fmt("%s %d %s", "test", 11, "string");
+  is(formatted, "test 11 string", "formats each part into a single string");
+
+  free(formatted);
+}
+
 void run_str_tests(void) {
   test_s_copy();
 
@@ -325,4 +332,6 @@ void run_str_tests(void) {
   test_s_split_no_match();
   test_s_split_empty_input();
   test_s_split_end_match();
+
+  test_s_fmt();
 }
