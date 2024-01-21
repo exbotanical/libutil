@@ -7,8 +7,6 @@
   "description": "A library of useful C utilities with JavaScript-like array, buffer, and string APIs",
   "keywords": ["array", "buffer", "formatting", "utilities", "helpers"],
   "src": ["include/libutil.h", "src/array.c", "src/buffer.c", "src/str.c"],
-  "install": "make install",
-  "uninstall": "make uninstall",
   "development": {
     "thlorenz/tap.c": "*"
   }
