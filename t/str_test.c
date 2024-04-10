@@ -1,5 +1,8 @@
+#include <stdlib.h>
+#include <string.h>
+
+#include "libtap/libtap.h"
 #include "libutil.h"
-#include "tap.c/tap.h"
 #include "tests.h"
 
 void test_s_truncate_begin(void) {

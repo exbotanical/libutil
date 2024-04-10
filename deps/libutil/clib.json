@@ -5,20 +5,9 @@
   "repo": "exbotanical/libutil",
   "license": "MIT",
   "description": "A library of useful C utilities with JavaScript-like array, buffer, and string APIs",
-  "keywords": [
-    "array",
-    "buffer",
-    "formatting",
-    "utilities",
-    "helpers"
-  ],
-  "src": [
-    "include/libutil.h",
-    "src/array.c",
-    "src/buffer.c",
-    "src/str.c"
-  ],
+  "keywords": ["array", "buffer", "formatting", "utilities", "helpers"],
+  "src": ["include/libutil.h", "src/array.c", "src/buffer.c", "src/str.c"],
   "development": {
-    "exbotanical/libtap": "0.0.3"
+    "thlorenz/tap.c": "*"
   }
 }

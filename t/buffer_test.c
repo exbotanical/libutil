@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "libtap/libtap.h"
 #include "libutil.h"
-#include "tap.c/tap.h"
 #include "tests.h"
 
 void test_buffer_init(void) {
@@ -17,10 +17,10 @@ void test_buffer_init(void) {
 
 void test_buffer_size(void) {
   buffer_t *buf = buffer_init(NULL);
-  cmp_ok(buffer_size(buf), "==", 0, "retrieves initial size");
+  ok(buffer_size(buf) == 0, "retrieves initial size");
 
   buffer_append(buf, "hello");
-  cmp_ok(buffer_size(buf), "==", 5, "retrieves updated size");
+  ok(buffer_size(buf) == 5, "retrieves updated size");
 
   buffer_free(buf);
 }
@@ -118,12 +118,12 @@ void test_buffer_concat_on_null(void) {
 
 void test_buffer_free(void) {
   buffer_t *buf = buffer_init(NULL);
-  lives_ok({ buffer_free(buf); }, "frees the buffer's heap memory");
+  lives({ buffer_free(buf); }, "frees the buffer's heap memory");
 }
 
 void test_buffer_free_nonnull(void) {
   buffer_t *buf = buffer_init("test");
-  lives_ok({ buffer_free(buf); }, "frees the buffer's memory");
+  lives({ buffer_free(buf); }, "frees the buffer's memory");
 }
 
 void run_buffer_tests(void) {
