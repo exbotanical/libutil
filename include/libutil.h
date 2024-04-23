@@ -7,6 +7,7 @@ extern "C" {
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdio.h>
 
 #ifndef LIB_UTIL_ARRAY_CAPACITY_INCR
 #define LIB_UTIL_ARRAY_CAPACITY_INCR 4
@@ -294,6 +295,26 @@ char *s_trim(const char *s);
  * Returns an array_t* of matches, if any, or NULL if erroneous.
  */
 array_t *s_split(const char *s, const char *delim);
+
+#ifndef READ_ALL_CHUNK_SZ
+#define READ_ALL_CHUNK_SZ 262144
+#endif
+
+typedef enum {
+  READ_ALL_OK = 0,          // Success
+  READ_ALL_INVALID = -1,    // Bad input
+  READ_ALL_ERR = -2,        // Stream err
+  READ_ALL_TOO_LARGE = -3,  // Input too large
+  READ_ALL_NOMEM = -4       // Out of memory
+} read_all_result;
+
+/**
+ * TODO:
+ *
+ * @param fd
+ * @return char*
+ */
+read_all_result read_all(FILE *fd, char **data_ptr, size_t *sz_ptr);
 
 #ifdef __cplusplus
 }

@@ -11,17 +11,17 @@
 #include "libtap.h"
 
 #if defined __APPLE__ || defined BSD
-#define MAP_ANONYMOUS MAP_ANON
+#  define MAP_ANONYMOUS MAP_ANON
 #endif
 
 #ifdef WANT_PTHREAD
-#include <pthread.h>
+#  include <pthread.h>
 static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-#define lock() pthread_mutex_lock(&mutex)
-#define unlock() pthread_mutex_unlock(&mutex)
+#  define lock()   pthread_mutex_lock(&mutex)
+#  define unlock() pthread_mutex_unlock(&mutex)
 #else
-#define lock()
-#define unlock()
+#  define lock()
+#  define unlock()
 #endif
 
 #define with_lock(code) \
@@ -30,16 +30,17 @@ static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 #define TAP_FAILURE_EXIT_STATUS 255
 
-static unsigned int has_plan = 0;
-static pid_t test_runner_pid = 0;
-static unsigned int test_died = 0;
+static unsigned int has_plan          = 0;
+static pid_t        test_runner_pid   = 0;
+static unsigned int test_died         = 0;
 static unsigned int num_planned_tests = 0;
-static unsigned int num_ran_tests = 0;
-static unsigned int num_failed_tests = 0;
-static unsigned int is_todo_block = 0;
-static char* todo_msg = NULL;
+static unsigned int num_ran_tests     = 0;
+static unsigned int num_failed_tests  = 0;
+static unsigned int is_todo_block     = 0;
+static char*        todo_msg          = NULL;
 
-noreturn void panic(const unsigned int errcode, const char* fmt, ...) {
+noreturn void
+panic (const unsigned int errcode, const char* fmt, ...) {
   va_list args;
   va_start(args, fmt);
   vfprintf(stderr, fmt, args);
@@ -48,13 +49,15 @@ noreturn void panic(const unsigned int errcode, const char* fmt, ...) {
   exit(errcode);
 }
 
-static void diagv(const char* fmt, va_list ap) {
+static void
+diagv (const char* fmt, va_list ap) {
   fprintf(stdout, "# ");
   vfprintf(stdout, fmt, ap);
   fprintf(stdout, "\n");
 }
 
-static void cleanup(void) {
+static void
+cleanup (void) {
   // Fast exit if we've forked
   if (getpid() != test_runner_pid) {
     return;
@@ -80,8 +83,12 @@ static void cleanup(void) {
 
   if (has_plan) {
     if (num_planned_tests != num_ran_tests) {
-      diag("Planned %d %s but ran %d", num_planned_tests,
-           num_planned_tests == 1 ? "test" : "tests", num_ran_tests);
+      diag(
+        "Planned %d %s but ran %d",
+        num_planned_tests,
+        num_planned_tests == 1 ? "test" : "tests",
+        num_ran_tests
+      );
     }
   }
 
@@ -92,9 +99,16 @@ static void cleanup(void) {
   unlock();
 }
 
-unsigned int __ok(unsigned int ok, const char* fn_name, const char* file,
-                  const unsigned int line, char* msg) {
+unsigned int
+__ok (
+  unsigned int       ok,
+  const char*        fn_name,
+  const char*        file,
+  const unsigned int line,
+  char*              msg
+) {
   lock();
+
   num_ran_tests++;
 
   if (!ok) {
@@ -122,8 +136,13 @@ unsigned int __ok(unsigned int ok, const char* fn_name, const char* file,
   free(msg);
 
   if (!ok) {
-    diag("\tFailed %stest (%s:%s at line %d)", is_todo_block ? "(TODO)" : "",
-         file, fn_name, line);
+    diag(
+      "\tFailed %stest (%s:%s at line %d)",
+      is_todo_block ? "(TODO)" : "",
+      file,
+      fn_name,
+      line
+    );
   }
 
   unlock();
@@ -131,7 +150,8 @@ unsigned int __ok(unsigned int ok, const char* fn_name, const char* file,
   return ok ? 1 : 0;
 }
 
-void __skip(unsigned int num_skips, char* msg) {
+void
+__skip (unsigned int num_skips, char* msg) {
   with_lock({
     while (num_skips--) {
       fprintf(stdout, "ok %d # SKIP %s", ++num_ran_tests, msg);
@@ -141,22 +161,30 @@ void __skip(unsigned int num_skips, char* msg) {
   });
 }
 
-int __write_shared_mem(int status) {
+int
+__write_shared_mem (int status) {
   static int* test_died = NULL;
-  int prev;
+  int         prev;
 
   if (!test_died) {
-    test_died = mmap(0, sizeof(int), PROT_READ | PROT_WRITE,
-                     MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+    test_died = mmap(
+      0,
+      sizeof(int),
+      PROT_READ | PROT_WRITE,
+      MAP_SHARED | MAP_ANONYMOUS,
+      -1,
+      0
+    );
     *test_died = 0;
   }
 
-  prev = *test_died;
+  prev       = *test_died;
   *test_died = status;
   return prev;
 }
 
-void todo_start(const char* fmt, ...) {
+void
+todo_start (const char* fmt, ...) {
   va_list ap;
 
   with_lock({
@@ -170,7 +198,8 @@ void todo_start(const char* fmt, ...) {
   });
 }
 
-void todo_end(void) {
+void
+todo_end (void) {
   with_lock({
     is_todo_block = 0;
     free(todo_msg);
@@ -178,14 +207,16 @@ void todo_end(void) {
   });
 }
 
-void diag(const char* fmt, ...) {
+void
+diag (const char* fmt, ...) {
   va_list ap;
   va_start(ap, fmt);
   diagv(fmt, ap);
   va_end(ap);
 }
 
-void plan(unsigned int num_ran_tests) {
+void
+plan (unsigned int num_ran_tests) {
   lock();
 
   static unsigned int singleton = 0;
@@ -212,7 +243,7 @@ void plan(unsigned int num_ran_tests) {
     panic(TAP_FAILURE_EXIT_STATUS, "no tests planned\n");
   }
 
-  has_plan = 1;
+  has_plan          = 1;
 
   num_planned_tests = num_ran_tests;
   fprintf(stdout, "1..%d\n", num_planned_tests);
@@ -220,7 +251,8 @@ void plan(unsigned int num_ran_tests) {
   unlock();
 }
 
-unsigned int exit_status(void) {
+unsigned int
+exit_status (void) {
   unsigned int retval;
 
   with_lock({
@@ -238,7 +270,8 @@ unsigned int exit_status(void) {
   return retval;
 }
 
-unsigned int bail_out(const char* fmt, ...) {
+unsigned int
+bail_out (const char* fmt, ...) {
   va_list args;
 
   va_start(args, fmt);
