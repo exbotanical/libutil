@@ -19,8 +19,8 @@ EXAMPLE_TARGET := example
 TEST_TARGET := test
 
 SRC := $(wildcard $(SRCDIR)/*.c)
-TEST_DEPS := $(wildcard $(DEPSDIR)/tap.c/*.c)
-DEPS := $(filter-out $(wildcard $(DEPSDIR)/tap.c/*), $(wildcard $(DEPSDIR)/*/*.c))
+TEST_DEPS := $(wildcard $(DEPSDIR)/libtap/*.c)
+DEPS := $(filter-out $(wildcard $(DEPSDIR)/libtap/*), $(wildcard $(DEPSDIR)/*/*.c))
 OBJ := $(addprefix obj/, $(notdir $(SRC:.c=.o)) $(notdir $(DEPS:.c=.o)))
 
 CFLAGS := -I$(LINCDIR) -I$(DEPSDIR) -Wall -Wextra -Wno-error=incompatible-pointer-types -pedantic -std=c17
