@@ -30,6 +30,7 @@ typedef void *callback_t(void *el, unsigned int index, array_t *array);
 typedef bool predicate_t(void *el, unsigned int index, array_t *array,
                          void *compare_to);
 typedef bool comparator_t(void *el, void *compare_to);
+typedef void free_fn(void *el);
 
 // An int comparator that implements the comparator_t interface
 bool int_comparator(int a, int b);
@@ -170,16 +171,10 @@ array_t *array_concat(array_t *arr1, array_t *arr2);
 
 /**
  * array_free frees the array and its internal state container. Safe to use
- * with an array of primitives.
+ * with an array of primitives. Accepts an optional function pointer if you want
+ * all values to be freed.
  */
-void array_free(array_t *array);
-
-/**
- * array_free_ptrs frees the array, its elements, and its internal state
- * container. NOT safe to use with an array of primitives; only for use with an
- * array whose elements are pointers.
- */
-void array_free_ptrs(array_t *array);
+void array_free(array_t *array, free_fn *free_fnptr);
 
 typedef struct {
   char *state;

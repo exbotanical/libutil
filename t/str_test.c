@@ -261,7 +261,7 @@ void test_s_split_ok(void) {
   is(array_get(paths, 2), "c", "substring is captured");
   is(array_get(paths, 3), "d", "substring is captured");
 
-  array_free_ptrs(paths);
+  array_free(paths, free);
 }
 
 void test_s_split_no_match(void) {
@@ -270,7 +270,7 @@ void test_s_split_no_match(void) {
 
   ok(array_size(paths) == 0, "split returns if delimiter not extant");
 
-  array_free(paths);
+  array_free(paths, free);
 }
 
 void test_s_split_empty_input(void) {
@@ -279,7 +279,7 @@ void test_s_split_empty_input(void) {
 
   ok(array_size(paths) == 0, "split returns if input is empty");
 
-  array_free(paths);
+  array_free(paths, NULL);
 }
 
 void test_s_split_end_match(void) {
@@ -290,7 +290,7 @@ void test_s_split_end_match(void) {
   is(array_get(paths, 0), "a:b:c:d", "substring is captured");
   is(array_get(paths, 1), "test", "substring is captured");
 
-  array_free_ptrs(paths);
+  array_free(paths, free);
 }
 
 void test_s_fmt(void) {

@@ -243,17 +243,14 @@ array_t *array_concat(array_t *arr1, array_t *arr2) {
   return (array_t *)result;
 }
 
-void array_free(array_t *array) {
+void array_free(array_t *array, free_fn *free_fnptr) {
   __array_t *internal = (__array_t *)array;
-
+  if (free_fnptr) {
+    foreach (array, i) {
+      free(array_get(array, i));
+    }
+  }
   free(internal->state);
   internal->state = NULL;
   free(internal);
-}
-
-void array_free_ptrs(array_t *array) {
-  foreach (array, i) {
-    free(array_get(array, i));
-  }
-  array_free(array);
 }

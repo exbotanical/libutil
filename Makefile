@@ -23,7 +23,7 @@ TEST_DEPS := $(wildcard $(DEPSDIR)/tap.c/*.c)
 DEPS := $(filter-out $(wildcard $(DEPSDIR)/tap.c/*), $(wildcard $(DEPSDIR)/*/*.c))
 OBJ := $(addprefix obj/, $(notdir $(SRC:.c=.o)) $(notdir $(DEPS:.c=.o)))
 
-CFLAGS := -I$(LINCDIR) -I$(DEPSDIR) -Wall -Wextra -pedantic -std=c17
+CFLAGS := -I$(LINCDIR) -I$(DEPSDIR) -Wall -Wextra -Wno-error=incompatible-pointer-types -pedantic -std=c17
 LIBS := -lm
 
 TESTS := $(wildcard $(TESTDIR)/*.c)
@@ -62,16 +62,16 @@ clean:
 	rm -f $(OBJ) $(STATIC_TARGET) $(DYNAMIC_TARGET) $(EXAMPLE_TARGET) $(TEST_TARGET)
 
 unit_test: $(STATIC_TARGET)
-	$(CC) $(TESTS) $(wildcard $(DEPSDIR)/tap.c/*.c) $(STATIC_TARGET) -I$(LINCDIR) -I$(SRCDIR) -I$(DEPSDIR) $(LIBS) -o $(TEST_TARGET)
+	$(CC) $(CFLAGS) $(TESTS) $(wildcard $(DEPSDIR)/tap.c/*.c) $(STATIC_TARGET) -I$(SRCDIR) $(LIBS) -o $(TEST_TARGET)
 	./$(TEST_TARGET)
 	$(MAKE) clean
 
 valgrind: $(STATIC_TARGET)
-	$(CC) $(TESTS) $(wildcard $(DEPSDIR)/tap.c/*.c) $(STATIC_TARGET) -I$(LINCDIR) -I$(SRCDIR) -I$(DEPSDIR) $(LIBS) -o $(TEST_TARGET)
+	$(CC) $(CFLAGS) $(TESTS) $(wildcard $(DEPSDIR)/tap.c/*.c) $(STATIC_TARGET) -I$(SRCDIR) $(LIBS) -o $(TEST_TARGET)
 	valgrind --leak-check=full --track-origins=yes -s ./$(TEST_TARGET)
 	$(MAKE) clean
 
 lint:
 	$(LINTER) -i $(wildcard $(SRCDIR)/*) $(wildcard $(TESTDIR)/*) $(wildcard $(LINCDIR)/*) $(wildcard $(EXAMPLEDIR)/*)
 
-.PHONY: clean test all obj install uninstall lint valgrind
+.PHONY: clean unit_test all obj install uninstall lint valgrind
