@@ -1,3 +1,7 @@
+# TODO: refactor and cleanup
+.PHONY: clean unit_test unit_test_dev all obj install uninstall lint valgrind
+.DELETE_ON_ERROR:
+
 CC ?= gcc
 AR ?= ar
 LINTER ?= clang-format
@@ -27,8 +31,6 @@ CFLAGS := -I$(LINCDIR) -I$(DEPSDIR) -Wall -Wextra -Wno-error=incompatible-pointe
 LIBS := -lm
 
 TESTS := $(wildcard $(TESTDIR)/*.c)
-
-SEPARATOR := ---------------------------
 
 all: $(DYNAMIC_TARGET) $(STATIC_TARGET)
 
@@ -62,16 +64,17 @@ clean:
 	rm -f $(OBJ) $(STATIC_TARGET) $(DYNAMIC_TARGET) $(EXAMPLE_TARGET) $(TEST_TARGET)
 
 unit_test: $(STATIC_TARGET)
-	$(CC) $(CFLAGS) $(TESTS) $(wildcard $(DEPSDIR)/tap.c/*.c) $(STATIC_TARGET) -I$(SRCDIR) $(LIBS) -o $(TEST_TARGET)
+	$(CC) $(CFLAGS) $(TESTS) $(TEST_DEPS) $(STATIC_TARGET) -I$(SRCDIR) $(LIBS) -o $(TEST_TARGET)
 	./$(TEST_TARGET)
 	$(MAKE) clean
 
+unit_test_dev:
+	ls $(SRCDIR)/*.{h,c} $(TESTDIR)/*.{h,c} | entr -s 'make -s unit_test'
+
 valgrind: $(STATIC_TARGET)
-	$(CC) $(CFLAGS) $(TESTS) $(wildcard $(DEPSDIR)/tap.c/*.c) $(STATIC_TARGET) -I$(SRCDIR) $(LIBS) -o $(TEST_TARGET)
+	$(CC) $(CFLAGS) $(TESTS) $(TEST_DEPS) $(STATIC_TARGET) -I$(SRCDIR) $(LIBS) -o $(TEST_TARGET)
 	valgrind --leak-check=full --track-origins=yes -s ./$(TEST_TARGET)
 	$(MAKE) clean
 
 lint:
 	$(LINTER) -i $(wildcard $(SRCDIR)/*) $(wildcard $(TESTDIR)/*) $(wildcard $(LINCDIR)/*) $(wildcard $(EXAMPLEDIR)/*)
-
-.PHONY: clean unit_test all obj install uninstall lint valgrind
