@@ -91,3 +91,25 @@ void buffer_free(buffer_t *buf) {
 
   free(internal);
 }
+
+// TODO: error enums
+// TODO: rename all to `self`
+// TODO: remove inclusivity flags - user can just pass the end index they want
+int buffer_slice(buffer_t *self, unsigned int start, unsigned int end_inclusive,
+                 char *dest) {
+  __buffer_t *internal = (__buffer_t *)self;
+
+  if (internal->len < end_inclusive || internal->state == NULL) {
+    return -1;
+  }
+
+  unsigned int x = 0;
+  unsigned int i = start;
+  for (; i <= end_inclusive; i++, x++) {
+    memcpy(&dest[x], &internal->state[i], 1);
+  }
+
+  dest[x] = '\0';
+
+  return 0;
+}

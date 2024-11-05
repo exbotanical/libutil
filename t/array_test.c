@@ -325,11 +325,15 @@ void test_array_concat(void) {
   array_t *arr2 = array_collect(v[3], v[4], v[5]);
 
   array_t *concatenated = array_concat(arr1, arr2);
+  array_free(arr1, NULL);
+  array_free(arr2, NULL);
 
   ok(array_size(concatenated) == 6, "has the expected size");
   foreach (concatenated, i) {
     is(array_get(concatenated, i), v[i], "contains %s at index %d", v[i], i);
   }
+
+  array_free(concatenated, NULL);
 }
 
 void test_array_realloc_sanity(void) {
@@ -339,6 +343,7 @@ void test_array_realloc_sanity(void) {
   for (int i = 0; i < 20; i++) {
     array_push(arr, v);
   }
+  array_free(arr, NULL);
 }
 
 // bug fix
@@ -354,6 +359,15 @@ void test_array_get_negative_idx(void) {
   is(array_get(arr, -1), "y", "retrieves the new last element given index -1");
   is(array_get(arr, -2), "x",
      "retrieves the penultimate element given index -2");
+
+  array_free(arr, NULL);
+}
+
+void test_array_insert(void) {
+  array_t *arr = array_init();
+
+  array_insert(arr, 100, "xxx", NULL);
+  array_free(arr, NULL);
 }
 
 void run_array_tests(void) {

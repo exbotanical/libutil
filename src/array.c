@@ -112,6 +112,37 @@ bool array_push(array_t *array, void *el) {
   return true;
 }
 
+bool array_insert(array_t *array, unsigned int index, void *el,
+                  free_fn *free_old_el) {
+  __array_t *internal = (__array_t *)array;
+
+  if (internal->capacity < index) {
+    void **next_state = realloc(internal->state, (index) * sizeof(void *));
+    if (!next_state) {
+      free(next_state);
+      errno = ENOMEM;
+
+      return false;
+    }
+
+    internal->state = next_state;
+    internal->capacity = index;
+
+    internal->state[internal->size++] = el;
+
+    return true;
+  }
+
+  void *old_el = internal->state[internal->size++];
+  if (old_el && free_old_el) {
+    free_old_el(old_el);
+  }
+
+  internal->state[internal->size] = el;
+
+  return true;
+}
+
 void *array_pop(array_t *array) {
   __array_t *internal = (__array_t *)array;
 

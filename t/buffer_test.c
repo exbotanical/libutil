@@ -126,15 +126,61 @@ void test_buffer_free_nonnull(void) {
   lives({ buffer_free(buf); }, "frees the buffer's memory");
 }
 
+void test_buffer_slice_ok(void) {
+  buffer_t *buf = buffer_init("test world test");
+
+  char slice[32];
+  int ret = buffer_slice(buf, 5, 9, slice);
+  ok(ret == 0, "retval is zero indicating no errors");
+  is(slice, "world", "returns the expected slice");
+}
+
+void test_buffer_slice_empty_buffer(void) {
+  buffer_t *buf = buffer_init("");
+
+  char slice[32];
+  int ret = buffer_slice(buf, 0, 0, slice);
+  ok(ret == 0, "retval is zero indicating no errors");
+  is(slice, "", "returns the expected slice");
+}
+
+void test_buffer_slice_bad_range(void) {
+  buffer_t *buf = buffer_init("test world test");
+
+  char slice[32];
+  int ret = buffer_slice(
+      buf, 5, 32,
+      NULL);  // No segfault from this proves the function fast-fails
+  ok(ret == -1, "retval is -1 indicating a bad range");
+}
+
+void test_buffer_slice_null_buffer(void) {
+  buffer_t *buf = buffer_init(NULL);
+
+  char slice[32];
+  int ret = buffer_slice(buf, 0, 0, NULL);
+  ok(ret == -1, "retval is -1 indicating a NULL internal state");
+}
+
 void run_buffer_tests(void) {
+  test_buffer_init();
+  test_buffer_init_with_initial();
+
   test_buffer_free();
   test_buffer_free_nonnull();
-  test_buffer_init();
+
   test_buffer_size();
+
   test_buffer_state();
-  test_buffer_init_with_initial();
+
   test_buffer_append();
   test_buffer_append_with();
+
   test_buffer_concat();
   test_buffer_concat_on_null();
+
+  test_buffer_slice_ok();
+  test_buffer_slice_empty_buffer();
+  test_buffer_slice_bad_range();
+  test_buffer_slice_null_buffer();
 }

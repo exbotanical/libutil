@@ -177,10 +177,13 @@ void array_foreach(array_t *array, callback_t *callback);
  */
 array_t *array_concat(array_t *arr1, array_t *arr2);
 
+bool array_insert(array_t *array, unsigned int index, void *el,
+                  free_fn *free_old_el);
+
 /**
  * array_free frees the array and its internal state container. Safe to use
- * with an array of primitives. Accepts an optional function pointer if you want
- * all values to be freed.
+ * with an array of primitives. Accepts an optional function pointer if you
+ * want all values to be freed.
  */
 void array_free(array_t *array, free_fn *free_fnptr);
 
@@ -228,6 +231,18 @@ bool buffer_append_with(buffer_t *buf, const char *s, unsigned int len);
  * Caller is responsible for `free`-ing the returned pointer.
  */
 buffer_t *buffer_concat(buffer_t *buf_a, buffer_t *buf_b);
+
+/**
+ * Retrieve a slice of the buffer state.
+ *
+ * @param self the buffer instance
+ * @param start start index of the slice
+ * @param end_inclusive inclusive end index of the slice
+ * @param dest a buffer into which the slice will be stored
+ * @return int -1 if an error occurred, else 0
+ */
+int buffer_slice(buffer_t *self, unsigned int start, unsigned int end_inclusive,
+                 char *dest);
 
 /**
  * buffer_free deallocates the dynamic memory used by a given buffer_t*.
