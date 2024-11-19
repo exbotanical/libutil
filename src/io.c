@@ -1,32 +1,59 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "libutil.h"
 
-// void write_all(int fd, const void *data, size_t sz) {
-//   while (sz) {
-//     ssize_t done;
+write_all_result write_all(FILE *fd, const char *data) {
+  size_t sz = strlen(data);
+  size_t total_written = 0;
+  size_t n_written;
 
-//     done = write(fd, data, sz);
-//     if (done <= 0) {
-//       _exit(1);
-//     }
-//     data = (const char *)data + done;
-//     sz -= done;
-//   }
-// }
+  if (fd == NULL || data == NULL) {
+    return WRITE_ALL_INVALID;
+  }
+
+  if (ferror(fd)) {
+    return WRITE_ALL_ERR;
+  }
+
+  while (total_written < sz) {
+    size_t remaining = sz - total_written;
+    size_t to_write =
+        (remaining < WRITE_ALL_CHUNK_SZ) ? remaining : WRITE_ALL_CHUNK_SZ;
+
+    n_written = fwrite(data + total_written, 1, to_write, fd);
+    if (n_written == 0) {
+      if (ferror(fd)) {
+        return WRITE_ALL_ERR;
+      }
+      break;
+    }
+    total_written += n_written;
+  }
+
+  if (total_written < sz) {
+    return WRITE_ALL_INCOMPLETE;
+  }
+
+  if (fflush(fd) != 0) {
+    return WRITE_ALL_ERR;
+  }
+
+  return WRITE_ALL_OK;
+}
 
 // Adapted from this answer https://stackoverflow.com/a/44894946
-read_all_result read_all(FILE *fd, char **data_ptr, size_t *sz_ptr) {
+read_all_result read_all(FILE *fd, char **data_ptr, size_t *n_read_ptr) {
   char *data = NULL;
   char *tmp;
   size_t sz = 0;
   size_t used = 0;
   size_t n;
 
-  if (fd == NULL || data_ptr == NULL || sz_ptr == NULL) {
+  if (fd == NULL || data_ptr == NULL || n_read_ptr == NULL) {
     return READ_ALL_INVALID;
   }
 
@@ -72,8 +99,8 @@ read_all_result read_all(FILE *fd, char **data_ptr, size_t *sz_ptr) {
     data = tmp;
     data[used] = '\0';
 
-    *data_ptr = data;
-    *sz_ptr = used;
+    *data_ptr = realloc(data, sz);
+    *n_read_ptr = used;
 
     return READ_ALL_OK;
   }

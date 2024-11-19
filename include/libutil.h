@@ -334,25 +334,57 @@ char *s_trim(const char *s);
  */
 array_t *s_split(const char *s, const char *delim);
 
+/**
+ * Chunk size for read_all. This is the number of bytes by which read_all
+ * increments its reads. OK to be larger than total bytes.
+ */
 #ifndef READ_ALL_CHUNK_SZ
 #define READ_ALL_CHUNK_SZ 262144
 #endif
 
+/**
+ * Chunk size for write_all. This is the number of bytes by which write_all
+ * increments its writes. OK to be larger than total bytes but use judiciously.
+ */
+#ifndef WRITE_ALL_CHUNK_SZ
+#define WRITE_ALL_CHUNK_SZ 1024
+#endif
+
 typedef enum {
   READ_ALL_OK = 0,          // Success
-  READ_ALL_INVALID = -1,    // Bad input
-  READ_ALL_ERR = -2,        // Stream err
+  READ_ALL_ERR = -1,        // Stream err
+  READ_ALL_INVALID = -2,    // Bad input
   READ_ALL_TOO_LARGE = -3,  // Input too large
   READ_ALL_NOMEM = -4       // Out of memory
 } read_all_result;
 
+typedef enum {
+  WRITE_ALL_OK = 0,           // Success
+  WRITE_ALL_ERR = -1,         // General error
+  WRITE_ALL_INVALID = -2,     // Bad data or file descriptor
+  WRITE_ALL_INCOMPLETE = -3,  // Failed to complete write
+} write_all_result;
+
 /**
- * TODO:
+ * Reads all data from the given file descriptor `fd`.
  *
- * @param fd
- * @return char*
+ * @param fd An opened file descriptor.
+ * @param data_ptr A pointer where the read data will be stored. Note, you can
+ * safely malloc(0) - this will be realloc'd based on the data size after
+ * reading.
+ * @param n_read_ptr A pointer where the number of bytes read will be stored.
+ * @return read_all_result
  */
-read_all_result read_all(FILE *fd, char **data_ptr, size_t *sz_ptr);
+read_all_result read_all(FILE *fd, char **data_ptr, size_t *n_read_ptr);
+
+/**
+ * Writes all data to the given file descriptor `fd`.
+ *
+ * @param fd An opened file descriptor.
+ * @param data A pointer to the data to be written in full.
+ * @return write_all_result
+ */
+write_all_result write_all(FILE *fd, const char *data);
 
 #ifdef __cplusplus
 }
