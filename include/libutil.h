@@ -8,6 +8,7 @@ extern "C" {
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <sys/types.h>
 
 #ifndef LIB_UTIL_ARRAY_CAPACITY_INCR
 #define LIB_UTIL_ARRAY_CAPACITY_INCR 4
@@ -15,8 +16,8 @@ extern "C" {
 
 typedef struct {
   void **state;
-  unsigned int size;
-  unsigned int capacity;
+  size_t size;
+  size_t capacity;
 } __array_t;
 
 /**
@@ -26,8 +27,8 @@ typedef __array_t *array_t;
 
 array_t *__array_collect(void *v, ...);
 
-typedef void *callback_t(void *el, unsigned int index, array_t *array);
-typedef bool predicate_t(void *el, unsigned int index, array_t *array,
+typedef void *callback_t(void *el, size_t index, array_t *array);
+typedef bool predicate_t(void *el, size_t index, array_t *array,
                          void *compare_to);
 typedef bool comparator_t(void *el, void *compare_to);
 typedef void free_fn(void *el);
@@ -44,7 +45,7 @@ bool str_comparator(char *a, char *b);
  * Example:
  * foreach(array, x) { printf("%d\n", array_get(array, x) + 1); }
  */
-#define foreach(arr, i) for (unsigned int i = 0; i < array_size(arr); i++)
+#define foreach(arr, i) for (size_t i = 0; i < array_size(arr); i++)
 
 /**
  * foreach_i generates a for loop statement to iterate the given array's size
@@ -56,7 +57,7 @@ bool str_comparator(char *a, char *b);
  * foreach(array, x, 3) { printf("%d\n", array_get(array, x) + 1); }
  */
 #define foreach_i(arr, i, start) \
-  for (unsigned int i = start; i < array_size(arr); i++)
+  for (size_t i = start; i < array_size(arr); i++)
 
 /**
  * has_elements returns a boolean indicating whether the given array_t contains
@@ -78,13 +79,13 @@ bool str_comparator(char *a, char *b);
 /**
  * array_size returns the size of the given array.
  */
-unsigned int array_size(array_t *array);
+size_t array_size(array_t *array);
 
 /**
  * array_get returns the element at the given index of the given array.
  * Returns NULL if index out-of-bounds.
  */
-void *array_get(array_t *array, int index);
+void *array_get(array_t *array, ssize_t index);
 
 /**
  * array_init initializes and returns a new array_t*.
@@ -109,7 +110,7 @@ bool array_includes(array_t *array, comparator_t *comparator, void *compare_to);
  *
  * If no match found, array_find returns -1.
  */
-int array_find(array_t *array, comparator_t *comparator, void *compare_to);
+ssize_t array_find(array_t *array, comparator_t *comparator, void *compare_to);
 
 /**
  * array_push appends the given element to the end of the array.
@@ -141,7 +142,7 @@ void *array_shift(array_t *array);
  *
  * Caller is responsible for `free`-ing the returned pointer.
  */
-array_t *array_slice(array_t *array, unsigned int start, int end);
+array_t *array_slice(array_t *array, size_t start, ssize_t end);
 
 /**
  * array_remove removes the element from the array at the given index. Returns a
@@ -149,7 +150,7 @@ array_t *array_slice(array_t *array, unsigned int start, int end);
  * given index is out-of-bounds). This method changes the length of the array
  * and collapses the elements.
  */
-bool array_remove(array_t *array, unsigned int idx);
+bool array_remove(array_t *array, size_t idx);
 
 /**
  * array_map returns a copy of the given array after applying the provided
@@ -177,8 +178,7 @@ void array_foreach(array_t *array, callback_t *callback);
  */
 array_t *array_concat(array_t *arr1, array_t *arr2);
 
-bool array_insert(array_t *array, unsigned int index, void *el,
-                  free_fn *free_old_el);
+bool array_insert(array_t *array, size_t index, void *el, free_fn *free_old_el);
 
 /**
  * array_free frees the array and its internal state container. Safe to use
@@ -189,7 +189,7 @@ void array_free(array_t *array, free_fn *free_fnptr);
 
 typedef struct {
   char *state;
-  unsigned int len;
+  size_t len;
 } __buffer_t;
 
 typedef __buffer_t *buffer_t;
@@ -197,7 +197,7 @@ typedef __buffer_t *buffer_t;
 /**
  * buffer_size returns the length of the buffer.
  */
-int buffer_size(buffer_t *buf);
+size_t buffer_size(buffer_t *buf);
 
 /**
  * buffer_state returns the internal state of the buffer.
@@ -218,11 +218,16 @@ buffer_t *buffer_init(const char *init);
 bool buffer_append(buffer_t *buf, const char *s);
 
 /**
- * buffer_append_with appends a string `s` to a given buffer `buf`, reallocating
- * the required memory as needed. A third parameter `len` specifies how many
- * characters of `s` to append.
+ * buffer_append_char appends a char to the given buffer `buf`.
  */
-bool buffer_append_with(buffer_t *buf, const char *s, unsigned int len);
+bool buffer_append_char(buffer_t *buf, const char c);
+
+/**
+ * buffer_append_with appends a string `s` to a given buffer `buf`,
+ * reallocating the required memory as needed. A third parameter `len`
+ * specifies how many characters of `s` to append.
+ */
+bool buffer_append_with(buffer_t *buf, const char *s, size_t len);
 
 /**
  * buffer_concat concatenates two buffers and returns them as a new buffer. Does
@@ -239,10 +244,10 @@ buffer_t *buffer_concat(buffer_t *buf_a, buffer_t *buf_b);
  * @param start start index of the slice
  * @param end_inclusive inclusive end index of the slice
  * @param dest a buffer into which the slice will be stored
- * @return int -1 if an error occurred, else 0
+ * @return bool false if an error occurred, else true
  */
-int buffer_slice(buffer_t *self, unsigned int start, unsigned int end_inclusive,
-                 char *dest);
+bool buffer_slice(buffer_t *self, size_t start, size_t end_inclusive,
+                  char *dest);
 
 /**
  * buffer_free deallocates the dynamic memory used by a given buffer_t*.
@@ -261,7 +266,7 @@ char *s_fmt(char *fmt, ...);
  *
  * Caller is responsible for `free`-ing the returned pointer.
  */
-char *s_truncate(const char *s, int n);
+char *s_truncate(const char *s, ssize_t n);
 
 /**
  * s_concat concatenates two strings `s1` and `s2` in that order.
@@ -282,7 +287,7 @@ char *s_copy(const char *s);
  * as it exists in a character array `str`.
  * Returns The index of `target` qua `str`, or -1 if not extant.
  */
-int s_indexof(const char *str, const char *target);
+ssize_t s_indexof(const char *str, const char *target);
 
 /**
  * s_substr finds and returns the substring between
@@ -293,7 +298,7 @@ int s_indexof(const char *str, const char *target);
  *
  * Caller is responsible for `free`-ing the returned pointer.
  */
-char *s_substr(const char *s, int start, int end, bool inclusive);
+char *s_substr(const char *s, size_t start, ssize_t end, bool inclusive);
 
 /**
  * s_casecmp performs a safe case-insensitive string comparison between

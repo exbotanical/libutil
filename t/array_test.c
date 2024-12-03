@@ -8,14 +8,14 @@ array_t *make_test_array(void) {
   array_t *array = array_init();
 
   char values[] = {'x', 'y', 'z', '1', '2', '3'};
-  for (unsigned int i = 0; i < 6; i++) {
+  for (size_t i = 0; i < 6; i++) {
     array_push(array, (void *)values[i]);
   }
 
   return array;
 }
 
-void test_array_init(void) {
+static void test_array_init(void) {
   array_t *array;
 
   lives({ array = array_init(); }, "initializes array");
@@ -24,7 +24,7 @@ void test_array_init(void) {
   array_free(array, NULL);
 }
 
-void test_array_size(void) {
+static void test_array_size(void) {
   array_t *array = array_init();
 
   ok(array_size(array) == 0, "retrieves initial size");
@@ -34,7 +34,7 @@ void test_array_size(void) {
   array_free(array, NULL);
 }
 
-void test_array_get(void) {
+static void test_array_get(void) {
   array_t *array = array_init();
   is(array_get(array, 0), NULL, "returns NULL if empty");
   is(array_get(array, 4), NULL, "index larger than len returns NULL");
@@ -53,7 +53,7 @@ void test_array_get(void) {
   array_free(array, NULL);
 }
 
-void test_array_includes(void) {
+static void test_array_includes(void) {
   array_t *array = make_test_array();
 
   ok(array_includes(array, int_comparator, (void *)'z') == true,
@@ -64,7 +64,7 @@ void test_array_includes(void) {
   array_free(array, NULL);
 }
 
-void test_array_find(void) {
+static void test_array_find(void) {
   array_t *array = make_test_array();
   ok((int)array_find(array, int_comparator, (void *)'z') == 2,
      "returns index when it finds the element");
@@ -80,11 +80,11 @@ void test_array_find(void) {
   array_free(strarr, NULL);
 }
 
-void test_array_push(void) {
+static void test_array_push(void) {
   __array_t *array = (__array_t *)array_init();
 
   char values[] = {'x', 'y', 'z'};
-  for (unsigned int i = 0; i < 3; i++) {
+  for (size_t i = 0; i < 3; i++) {
     void *el = (void *)values[i];
 
     ok(array_push((array_t *)array, el) == true,
@@ -97,11 +97,11 @@ void test_array_push(void) {
   array_free((array_t *)array, NULL);
 }
 
-void test_array_pop(void) {
+static void test_array_pop(void) {
   array_t *array = array_init();
 
   char values[] = {'x', 'y', 'z'};
-  unsigned int i = 0;
+  size_t i = 0;
   for (; i < 3; i++) {
     array_push(array, (void *)values[i]);
   }
@@ -115,11 +115,11 @@ void test_array_pop(void) {
   array_free(array, NULL);
 }
 
-void test_array_pop_empty(void) {
+static void test_array_pop_empty(void) {
   array_t *array = array_init();
 
   char values[] = {'x', 'y', 'z'};
-  unsigned int i = 0;
+  size_t i = 0;
   for (; i < 3; i++) {
     array_push(array, (void *)values[i]);
   }
@@ -132,12 +132,12 @@ void test_array_pop_empty(void) {
   array_free(array, NULL);
 }
 
-void test_array_shift(void) {
+static void test_array_shift(void) {
   array_t *array = array_init();
   __array_t *internal = (__array_t *)array;
 
   char values[] = {'x', 'y', 'z'};
-  for (unsigned int i = 0; i < 3; i++) {
+  for (size_t i = 0; i < 3; i++) {
     array_push(array, (void *)values[i]);
   }
 
@@ -156,7 +156,7 @@ void test_array_shift(void) {
   array_free(array, NULL);
 }
 
-void test_array_shift_empty(void) {
+static void test_array_shift_empty(void) {
   array_t *array = array_init();
 
   is(array_shift(array), NULL, "shift on an empty array returns NULL");
@@ -164,13 +164,13 @@ void test_array_shift_empty(void) {
   array_free(array, NULL);
 }
 
-void test_array_slice(void) {
+static void test_array_slice(void) {
   array_t *array = make_test_array();
   __array_t *sliced = (__array_t *)array_slice(array, 1, 4);
 
   ok(sliced->size == 3, "slices the range of elements inclusively");
 
-  for (unsigned int i = 0; i < 3; i++) {
+  for (size_t i = 0; i < 3; i++) {
     ok((int)sliced->state[i] == (int)((__array_t *)array)->state[i + 1],
        "contains the sliced elements");
   }
@@ -179,13 +179,13 @@ void test_array_slice(void) {
   array_free((array_t *)sliced, NULL);
 }
 
-void test_array_slice_negative(void) {
+static void test_array_slice_negative(void) {
   array_t *array = make_test_array();
   __array_t *sliced = (__array_t *)array_slice(array, 1, -1);
 
   ok(sliced->size == 5, "slices the range of elements inclusively");
 
-  for (unsigned int i = 0; i < 5; i++) {
+  for (size_t i = 0; i < 5; i++) {
     ok((int)sliced->state[i] == (int)((__array_t *)array)->state[i + 1],
        "contains the sliced elements");
   }
@@ -194,7 +194,7 @@ void test_array_slice_negative(void) {
   array_free((array_t *)sliced, NULL);
 }
 
-void test_array_remove(void) {
+static void test_array_remove(void) {
   array_t *array = make_test_array();
   __array_t *internal = (__array_t *)array;
 
@@ -202,7 +202,7 @@ void test_array_remove(void) {
      "returns true when the element was removed");
 
   char values[] = {'x', 'y', '1', '2', '3'};
-  for (unsigned int i = 0; i < internal->size; i++) {
+  for (size_t i = 0; i < internal->size; i++) {
     ok((int)internal->state[i] == values[i],
        "contains all elements except for removed");
   }
@@ -210,7 +210,7 @@ void test_array_remove(void) {
   array_free(array, NULL);
 }
 
-void test_array_remove_not_found(void) {
+static void test_array_remove_not_found(void) {
   array_t *array = make_test_array();
 
   ok(array_remove(array, 12) == false,
@@ -220,11 +220,11 @@ void test_array_remove_not_found(void) {
 }
 
 #define MAPPER_INC 10
-void *mapper(void *el, unsigned int index, array_t *array) {
+static void *mapper(void *el, size_t index, array_t *array) {
   return el + MAPPER_INC;
 }
 
-void test_array_map(void) {
+static void test_array_map(void) {
   array_t *array = make_test_array();
   __array_t *internal = (__array_t *)array;
 
@@ -232,7 +232,7 @@ void test_array_map(void) {
   ok(transformed->size == internal->size,
      "has the same length as the input array");
 
-  for (unsigned int i = 0; i < 3; i++) {
+  for (size_t i = 0; i < 3; i++) {
     ok((int)transformed->state[i], "==", (int)internal->state[i] + MAPPER_INC,
        "applies the function to each element");
   }
@@ -241,16 +241,16 @@ void test_array_map(void) {
   array_free((array_t *)transformed, NULL);
 }
 
-bool filter(void *el, unsigned int index, array_t *array, void *compare_to) {
+bool filter(void *el, size_t index, array_t *array, void *compare_to) {
   return el > compare_to;
 }
-void test_array_filter(void) {
+static void test_array_filter(void) {
   array_t *array = make_test_array();
 
   __array_t *transformed =
       (__array_t *)array_filter(array, filter, (void *)'A');
   ok(transformed->size == 3, "has a length of filtered elements only");
-  for (unsigned int i = 0; i < transformed->size; i++) {
+  for (size_t i = 0; i < transformed->size; i++) {
     void *el = array_get(array, i);
 
     if ((int)el > 'A') {
@@ -263,7 +263,7 @@ void test_array_filter(void) {
   array_free((array_t *)transformed, NULL);
 }
 
-void test_foreach_macro(void) {
+static void test_foreach_macro(void) {
   array_t *array = array_init();
   array_push(array, (void *)1);
   array_push(array, (void *)2);
@@ -273,7 +273,7 @@ void test_foreach_macro(void) {
     ok(x + 1 == array_get(array, x), "iterates the array");
   }
 
-  unsigned int count = 0;
+  size_t count = 0;
   foreach_i(array, x, 1) { count += 1; }
 
   ok(2 == count, "starts at the provided count");
@@ -281,7 +281,7 @@ void test_foreach_macro(void) {
   array_free(array, NULL);
 }
 
-void test_has_elements_macro(void) {
+static void test_has_elements_macro(void) {
   array_t *array = NULL;
 
   lives(
@@ -306,7 +306,7 @@ void test_has_elements_macro(void) {
   array_free(array, NULL);
 }
 
-void test_array_collect(void) {
+static void test_array_collect(void) {
   array_t *collected = array_collect("a", "b", "c");
 
   ok(array_size(collected) == 3, "contains all and only the elements added");
@@ -318,7 +318,7 @@ void test_array_collect(void) {
   array_free(collected, NULL);
 }
 
-void test_array_concat(void) {
+static void test_array_concat(void) {
   char *v[6] = {"a", "b", "c", "x", "y", "z"};
 
   array_t *arr1 = array_collect(v[0], v[1], v[2]);
@@ -336,18 +336,18 @@ void test_array_concat(void) {
   array_free(concatenated, NULL);
 }
 
-void test_array_realloc_sanity(void) {
+static void test_array_realloc_sanity(void) {
   void *v = "value";
 
   array_t *arr = array_init();
-  for (int i = 0; i < 20; i++) {
+  for (size_t i = 0; i < 20; i++) {
     array_push(arr, v);
   }
   array_free(arr, NULL);
 }
 
 // bug fix
-void test_array_get_negative_idx(void) {
+static void test_array_get_negative_idx(void) {
   array_t *arr = array_init();
   array_push(arr, "x");
 
@@ -363,7 +363,7 @@ void test_array_get_negative_idx(void) {
   array_free(arr, NULL);
 }
 
-void test_array_insert(void) {
+static void test_array_insert(void) {
   array_t *arr = array_init();
 
   array_insert(arr, 100, "xxx", NULL);

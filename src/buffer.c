@@ -4,7 +4,7 @@
 
 #include "libutil.h"
 
-int buffer_size(buffer_t *buf) { return ((__buffer_t *)buf)->len; }
+size_t buffer_size(buffer_t *buf) { return ((__buffer_t *)buf)->len; }
 
 char *buffer_state(buffer_t *buf) { return ((__buffer_t *)buf)->state; }
 
@@ -31,7 +31,7 @@ bool buffer_append(buffer_t *buf, const char *s) {
   }
 
   __buffer_t *internal = (__buffer_t *)buf;
-  unsigned int len = strlen(s);
+  size_t len = strlen(s);
 
   // get mem sizeof current str + sizeof append str
   char *next = realloc(internal->state, internal->len + len + 1);
@@ -48,7 +48,15 @@ bool buffer_append(buffer_t *buf, const char *s) {
   return true;
 }
 
-bool buffer_append_with(buffer_t *buf, const char *s, unsigned int len) {
+bool buffer_append_char(buffer_t *buf, const char c) {
+  char tmp[2];
+  tmp[0] = c;
+  tmp[1] = '\0';
+
+  return buffer_append(buf, tmp);
+}
+
+bool buffer_append_with(buffer_t *buf, const char *s, size_t len) {
   __buffer_t *internal = (__buffer_t *)buf;
 
   char *next = realloc(internal->state, internal->len + len + 1);
@@ -95,21 +103,20 @@ void buffer_free(buffer_t *buf) {
 // TODO: error enums
 // TODO: rename all to `self`
 // TODO: remove inclusivity flags - user can just pass the end index they want
-int buffer_slice(buffer_t *self, unsigned int start, unsigned int end_inclusive,
-                 char *dest) {
+bool buffer_slice(buffer_t *self, size_t start, size_t end_inclusive,
+                  char *dest) {
   __buffer_t *internal = (__buffer_t *)self;
-
   if (internal->len < end_inclusive || internal->state == NULL) {
-    return -1;
+    return false;
   }
 
-  unsigned int x = 0;
-  unsigned int i = start;
+  size_t x = 0;
+  size_t i = start;
   for (; i <= end_inclusive; i++, x++) {
     memcpy(&dest[x], &internal->state[i], 1);
   }
 
   dest[x] = '\0';
 
-  return 0;
+  return true;
 }

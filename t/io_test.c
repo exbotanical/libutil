@@ -8,7 +8,7 @@
 #include "libutil.h"
 #include "tests.h"
 
-void test_read_all_full_file() {
+static void test_read_all_full_file() {
   FILE *fd = fopen("./t/fixtures/read.txt", "r");
   if (!fd) {
     perror("fopen");
@@ -30,7 +30,7 @@ void test_read_all_full_file() {
   free(data);
 }
 
-void test_write_all_full_file(void) {
+static void test_write_all_full_file(void) {
   FILE *fd = fopen("./t/fixtures/read.txt", "r");
   if (!fd) {
     perror("fopen");

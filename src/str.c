@@ -11,16 +11,16 @@ static bool is_ascii_space(char b) {
   return b == ' ' || b == '\t' || b == '\n' || b == '\r';
 }
 
-char *s_truncate(const char *s, int n) {
-  unsigned int full_len = strlen(s);
-  unsigned int trunclen = abs(n);
+char *s_truncate(const char *s, ssize_t n) {
+  size_t full_len = strlen(s);
+  size_t trunclen = abs(n);
 
   // Simply return a copy if invalid n
   if (n == 0 || trunclen >= full_len) {
     return s_copy(s);
   }
 
-  size_t sz = (size_t)full_len - trunclen;
+  size_t sz = full_len - trunclen;
 
   char *ret = malloc(sz + 1);
   if (!ret) {
@@ -37,7 +37,7 @@ char *s_truncate(const char *s, int n) {
 }
 
 char *s_concat(const char *s1, const char *s2) {
-  unsigned int size = sizeof(s1) + sizeof(s1);
+  size_t size = sizeof(s1) + sizeof(s1);
   char *ret = malloc(size);
   if (!ret) {
     return NULL;
@@ -53,7 +53,7 @@ char *s_copy(const char *s) {
     return NULL;
   }
 
-  int len = strlen(s) + 1;
+  size_t len = strlen(s) + 1;
   char *buf = malloc(len);
 
   if (buf) {
@@ -63,7 +63,7 @@ char *s_copy(const char *s) {
   return buf;
 }
 
-int s_indexof(const char *s, const char *target) {
+ssize_t s_indexof(const char *s, const char *target) {
   if (s == NULL || target == NULL) {
     return -1;
   }
@@ -76,14 +76,14 @@ int s_indexof(const char *s, const char *target) {
   return needle - s;
 }
 
-char *s_substr(const char *s, int start, int end, bool inclusive) {
+char *s_substr(const char *s, size_t start, ssize_t end, bool inclusive) {
   end = inclusive ? end : end - 1;
 
   if (start > end) {
     return NULL;
   }
 
-  int len = strlen(s);
+  size_t len = strlen(s);
   if (start < 0 || start > len) {
     return NULL;
   }
@@ -92,7 +92,7 @@ char *s_substr(const char *s, int start, int end, bool inclusive) {
     return NULL;
   }
 
-  int size_multiplier = end - start;
+  size_t size_multiplier = end - start;
   // Fix: Fatal glibc error: malloc.c:2593 (sysmalloc): assertion failed:
   // (old_top == initial_top (av) && old_size == 0) || ((unsigned long)
   // (old_size) >= MINSIZE && prev_inuse (old_top) && ((unsigned long) old_end &
@@ -102,8 +102,8 @@ char *s_substr(const char *s, int start, int end, bool inclusive) {
     return NULL;
   }
 
-  int i = 0;
-  int j = 0;
+  size_t i = 0;
+  size_t j = 0;
   for (i = start, j = 0; i <= end; i++, j++) {
     ret[j] = s[i];
   }
@@ -114,10 +114,10 @@ char *s_substr(const char *s, int start, int end, bool inclusive) {
 }
 
 bool s_casecmp(const char *s1, const char *s2) {
-  unsigned int s1l = strlen(s1);
-  unsigned int s2l = strlen(s2);
+  size_t s1l = strlen(s1);
+  size_t s2l = strlen(s2);
 
-  unsigned int compare_chars = s1l > s2l ? s1l : s2l;
+  size_t compare_chars = s1l > s2l ? s1l : s2l;
   return strncasecmp(s1, s2, compare_chars) == 0;
 }
 
@@ -220,7 +220,7 @@ char *s_fmt(char *fmt, ...) {
   va_copy(args_cp, args);
 
   // Pass length of zero first to determine number of bytes needed
-  unsigned int n = vsnprintf(NULL, 0, fmt, args) + 1;
+  size_t n = vsnprintf(NULL, 0, fmt, args) + 1;
   char *buf = malloc(n);
   if (!buf) {
     return NULL;
