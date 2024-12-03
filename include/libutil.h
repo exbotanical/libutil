@@ -387,9 +387,11 @@ read_all_result read_all(FILE *fd, char **data_ptr, size_t *n_read_ptr);
  *
  * @param fd An opened file descriptor.
  * @param data A pointer to the data to be written in full.
+ * @param n_write_ptr A pointer where the number of bytes written will be
+ * stored.
  * @return write_all_result
  */
-write_all_result write_all(FILE *fd, const char *data);
+write_all_result write_all(FILE *fd, const char *data, size_t *n_write_ptr);
 
 #ifdef __cplusplus
 }

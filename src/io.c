@@ -6,7 +6,7 @@
 
 #include "libutil.h"
 
-write_all_result write_all(FILE *fd, const char *data) {
+write_all_result write_all(FILE *fd, const char *data, size_t *n_write_ptr) {
   size_t sz = strlen(data);
   size_t total_written = 0;
   size_t n_written;
@@ -33,6 +33,8 @@ write_all_result write_all(FILE *fd, const char *data) {
     }
     total_written += n_written;
   }
+  // TODO: Tests
+  *n_write_ptr = n_written;
 
   if (total_written < sz) {
     return WRITE_ALL_INCOMPLETE;
