@@ -340,35 +340,36 @@ char *s_trim(const char *s);
 array_t *s_split(const char *s, const char *delim);
 
 /**
- * Chunk size for read_all. This is the number of bytes by which read_all
+ * Chunk size for io_read_all. This is the number of bytes by which io_read_all
  * increments its reads. OK to be larger than total bytes.
  */
-#ifndef READ_ALL_CHUNK_SZ
-#define READ_ALL_CHUNK_SZ 262144
+#ifndef IO_IO_READ_ALL_CHUNK_SZ
+#define IO_IO_READ_ALL_CHUNK_SZ 262144
 #endif
 
 /**
- * Chunk size for write_all. This is the number of bytes by which write_all
- * increments its writes. OK to be larger than total bytes but use judiciously.
+ * Chunk size for io_write_all. This is the number of bytes by which
+ * io_write_all increments its writes. OK to be larger than total bytes but use
+ * judiciously.
  */
-#ifndef WRITE_ALL_CHUNK_SZ
-#define WRITE_ALL_CHUNK_SZ 1024
+#ifndef IO_IO_WRITE_ALL_CHUNK_SZ
+#define IO_IO_WRITE_ALL_CHUNK_SZ 1024
 #endif
 
 typedef enum {
-  READ_ALL_OK = 0,          // Success
-  READ_ALL_ERR = -1,        // Stream err
-  READ_ALL_INVALID = -2,    // Bad input
-  READ_ALL_TOO_LARGE = -3,  // Input too large
-  READ_ALL_NOMEM = -4       // Out of memory
-} read_all_result;
+  IO_READ_ALL_OK = 0,          // Success
+  IO_READ_ALL_ERR = -1,        // Stream err
+  IO_READ_ALL_INVALID = -2,    // Bad input
+  IO_READ_ALL_TOO_LARGE = -3,  // Input too large
+  IO_READ_ALL_NOMEM = -4       // Out of memory
+} io_read_all_result;
 
 typedef enum {
-  WRITE_ALL_OK = 0,           // Success
-  WRITE_ALL_ERR = -1,         // General error
-  WRITE_ALL_INVALID = -2,     // Bad data or file descriptor
-  WRITE_ALL_INCOMPLETE = -3,  // Failed to complete write
-} write_all_result;
+  IO_WRITE_ALL_OK = 0,           // Success
+  IO_WRITE_ALL_ERR = -1,         // General error
+  IO_WRITE_ALL_INVALID = -2,     // Bad data or file descriptor
+  IO_WRITE_ALL_INCOMPLETE = -3,  // Failed to complete write
+} io_write_all_result;
 
 /**
  * Reads all data from the given file descriptor `fd`.
@@ -378,9 +379,9 @@ typedef enum {
  * safely malloc(0) - this will be realloc'd based on the data size after
  * reading.
  * @param n_read_ptr A pointer where the number of bytes read will be stored.
- * @return read_all_result
+ * @return io_read_all_result
  */
-read_all_result read_all(FILE *fd, char **data_ptr, size_t *n_read_ptr);
+io_read_all_result io_read_all(FILE *fd, char **data_ptr, size_t *n_read_ptr);
 
 /**
  * Writes all data to the given file descriptor `fd`.
@@ -389,9 +390,10 @@ read_all_result read_all(FILE *fd, char **data_ptr, size_t *n_read_ptr);
  * @param data A pointer to the data to be written in full.
  * @param n_write_ptr A pointer where the number of bytes written will be
  * stored.
- * @return write_all_result
+ * @return io_write_all_result
  */
-write_all_result write_all(FILE *fd, const char *data, size_t *n_write_ptr);
+io_write_all_result io_write_all(FILE *fd, const char *data,
+                                 size_t *n_write_ptr);
 
 #ifdef __cplusplus
 }

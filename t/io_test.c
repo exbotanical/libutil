@@ -17,9 +17,9 @@ static void test_read_all_full_file() {
 
   char *data = malloc(0);
   size_t sz = sizeof(data);
-  read_all_result ret = read_all(fd, &data, &sz);
+  io_read_all_result ret = io_read_all(fd, &data, &sz);
 
-  ok(READ_ALL_OK == ret, "returns READ_ALL_OK on successful read");
+  ok(IO_READ_ALL_OK == ret, "returns IO_READ_ALL_OK on successful read");
   ok(sz == 68241, "reads the correct number of bytes");
   is("The Colour Out of Space\n", s_substr(data, 0, 23, true),
      "first chars match");
@@ -39,7 +39,7 @@ static void test_write_all_full_file(void) {
 
   char *data = malloc(0);
   size_t sz = sizeof(data);
-  assert(READ_ALL_OK == read_all(fd, &data, &sz));
+  assert(IO_READ_ALL_OK == io_read_all(fd, &data, &sz));
 
   fclose(fd);
   fd = NULL;
@@ -50,8 +50,9 @@ static void test_write_all_full_file(void) {
     exit(1);
   }
 
-  ok(WRITE_ALL_OK == write_all(fd, data),
-     "returns WRITE_ALL_OK on successful write");
+  size_t n_written = 0;
+  ok(IO_WRITE_ALL_OK == io_write_all(fd, data, &n_written),
+     "returns IO_WRITE_ALL_OK on successful write");
   is("The Colour Out of Space\n", s_substr(data, 0, 23, true),
      "first chars match");
   is("troubling my sleep.\n", s_substr(data, 68221, 68241, true),
@@ -69,7 +70,7 @@ static void test_write_all_full_file(void) {
 
   data = malloc(0);
   sz = sizeof(data);
-  assert(READ_ALL_OK == read_all(fd, &data, &sz));
+  assert(IO_READ_ALL_OK == io_read_all(fd, &data, &sz));
 
   ok(sz == 68241,
      "make sure the length is the same and we didn't append NULLs or "
