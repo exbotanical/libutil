@@ -62,8 +62,23 @@ static void test_s_truncate_too_short(void) {
 static void test_s_concat(void) {
   char *ret = s_concat("hello", " world");
   is(ret, "hello world", "concatenates the provided strings");
+  free(ret);
+}
+
+static void test_s_concat_arr(void) {
+  char **arr = malloc(sizeof(char *) * 4);
+
+  arr[0] = "Hassle";
+  arr[1] = "Goldstriker";
+  arr[2] = "B.U.R.T";
+  arr[3] = NULL;
+
+  char *ret = s_concat_arr(arr, ", ");
+  is(ret, "Hassle, Goldstriker, B.U.R.T",
+     "concatenates the provided array of strings with the given delimiter");
 
   free(ret);
+  free(arr);
 }
 
 static void test_s_indexof_ok(void) {
@@ -311,6 +326,7 @@ void run_str_tests(void) {
   test_s_truncate_too_short();
 
   test_s_concat();
+  test_s_concat_arr();
 
   test_s_indexof_ok();
   test_s_indexof_no_match();

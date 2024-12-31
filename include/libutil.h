@@ -276,6 +276,13 @@ char *s_truncate(const char *s, ssize_t n);
 char *s_concat(const char *s1, const char *s2);
 
 /**
+ * s_concat_arr concatenates an array of strings using a given delimiter.
+ *
+ * Caller is responsible for `free`-ing the returned pointer.
+ */
+char *s_concat_arr(char **arr, const char *delimiter);
+
+/**
  * s_copy returns a copy of given string `str`. Compare to strdup.
  *
  * Caller is responsible for `free`-ing the returned pointer.

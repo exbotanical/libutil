@@ -37,15 +37,49 @@ char *s_truncate(const char *s, ssize_t n) {
 }
 
 char *s_concat(const char *s1, const char *s2) {
-  size_t size = sizeof(s1) + sizeof(s1);
+  size_t size = strlen(s1) + strlen(s1) + 2;
   char *ret = malloc(size);
   if (!ret) {
     return NULL;
   }
 
-  snprintf(ret, strlen(s1) + strlen(s2) + 1, "%s%s", s1, s2);
+  snprintf(ret, size, "%s%s", s1, s2);
 
   return ret;
+}
+
+char *s_concat_arr(char **arr, const char *delimiter) {
+  if (arr == NULL || *arr == NULL) {
+    return NULL;
+  }
+
+  size_t delimiter_len = strlen(delimiter);
+  size_t total_length = 0;
+  size_t num_strings = 0;
+
+  for (char **ptr = arr; *ptr != NULL; ptr++) {
+    total_length += strlen(*ptr);
+    num_strings++;
+  }
+  total_length += (num_strings - 1) * delimiter_len;
+
+  char *result = malloc(total_length + 1);
+  char *current = result;
+
+  for (char **ptr = arr; *ptr != NULL; ptr++) {
+    size_t len = strlen(*ptr);
+    memcpy(current, *ptr, len);
+    current += len;
+
+    if (*(ptr + 1) != NULL) {
+      memcpy(current, delimiter, delimiter_len);
+      current += delimiter_len;
+    }
+  }
+
+  *current = '\0';
+
+  return result;
 }
 
 char *s_copy(const char *s) {
