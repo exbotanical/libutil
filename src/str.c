@@ -13,7 +13,7 @@ static bool is_ascii_space(char b) {
 
 char *s_truncate(const char *s, ssize_t n) {
   size_t full_len = strlen(s);
-  size_t trunclen = abs(n);
+  size_t trunclen = abs((int)n);
 
   // Simply return a copy if invalid n
   if (n == 0 || trunclen >= full_len) {
@@ -113,16 +113,16 @@ ssize_t s_indexof(const char *s, const char *target) {
 char *s_substr(const char *s, size_t start, ssize_t end, bool inclusive) {
   end = inclusive ? end : end - 1;
 
-  if (start > end) {
+  if ((ssize_t)start > end) {
     return NULL;
   }
 
   size_t len = strlen(s);
-  if (start < 0 || start > len) {
+  if (start > len) {
     return NULL;
   }
 
-  if (end > len) {
+  if (end > (ssize_t)len) {
     return NULL;
   }
 
@@ -138,7 +138,7 @@ char *s_substr(const char *s, size_t start, ssize_t end, bool inclusive) {
 
   size_t i = 0;
   size_t j = 0;
-  for (i = start, j = 0; i <= end; i++, j++) {
+  for (i = start, j = 0; (ssize_t)i <= end; i++, j++) {
     ret[j] = s[i];
   }
 

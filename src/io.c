@@ -108,4 +108,6 @@ io_read_all_result io_read_all(FILE *fd, char **data_ptr, size_t *n_read_ptr) {
 
     return IO_READ_ALL_OK;
   }
+
+  return IO_READ_ALL_ERR;
 }
