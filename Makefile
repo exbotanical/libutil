@@ -2,49 +2,53 @@
 .PHONY: clean unit_test unit_test_dev all obj install uninstall lint valgrind
 .DELETE_ON_ERROR:
 
-CC ?= gcc
-AR ?= ar
-LINTER ?= clang-format
+CC             ?= gcc
+AR             ?= ar
+LINTER         ?= clang-format
 
-LIB := libutil
+LIB            := libutil
 
-PREFIX := /usr/local
-INCDIR := $(PREFIX)/include
-LIBDIR := $(PREFIX)/lib
-SRCDIR := src
-DEPSDIR := deps
-TESTDIR := t
-EXAMPLEDIR := examples
-LINCDIR := include
+PREFIX         := /usr/local
+INCDIR         := $(PREFIX)/include
+LIBDIR         := $(PREFIX)/lib
+SRCDIR         := src
+DEPSDIR        := deps
+TESTDIR        := t
+EXAMPLEDIR     := examples
+LINCDIR        := include
 
 DYNAMIC_TARGET := $(LIB).so
-STATIC_TARGET := $(LIB).a
+STATIC_TARGET  := $(LIB).a
 EXAMPLE_TARGET := example
-TEST_TARGET := test
+TEST_TARGET    := test
 
-SRC := $(wildcard $(SRCDIR)/*.c)
+SRC       := $(wildcard $(SRCDIR)/*.c)
 TEST_DEPS := $(wildcard $(DEPSDIR)/libtap/*.c)
-DEPS := $(filter-out $(wildcard $(DEPSDIR)/libtap/*), $(wildcard $(DEPSDIR)/*/*.c))
-OBJ := $(addprefix obj/, $(notdir $(SRC:.c=.o)) $(notdir $(DEPS:.c=.o)))
+DEPS      := $(filter-out $(wildcard $(DEPSDIR)/libtap/*), $(wildcard $(DEPSDIR)/*/*.c))
+OBJ       := $(addprefix obj/, $(notdir $(SRC:.c=.o)) $(notdir $(DEPS:.c=.o)))
 
-CFLAGS := -I$(LINCDIR) -I$(DEPSDIR) -Wall -Wextra -Wno-error=incompatible-pointer-types -pedantic -std=c17
-LIBS := -lm
+STRICT    := -Wall -Werror -Wextra -Wno-missing-field-initializers \
+ -Wmissing-prototypes -Wstrict-prototypes -Wold-style-definition \
+ -Wno-unused-parameter -Wno-unused-function -Wno-unused-value \
 
-TESTS := $(wildcard $(TESTDIR)/*.c)
+CFLAGS    := -I$(LINCDIR) -I$(DEPSDIR) -pedantic -Wno-error=incompatible-pointer-types -std=c17
+LIBS      := -lm
+
+TESTS     := $(wildcard $(TESTDIR)/*.c)
 
 all: $(DYNAMIC_TARGET) $(STATIC_TARGET)
 
 $(DYNAMIC_TARGET): $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -shared $(LIBS) -o $(DYNAMIC_TARGET)
+	$(CC) $(CFLAGS) $(STRICT) $(OBJ) -shared $(LIBS) -o $(DYNAMIC_TARGET)
 
 $(STATIC_TARGET): $(OBJ)
 	$(AR) rcs $@ $(OBJ)
 
 obj/%.o: $(SRCDIR)/%.c $(LINCDIR)/$(LIB).h | obj
-	$(CC) $< -c $(CFLAGS) -o $@
+	$(CC) $< -c $(CFLAGS) $(STRICT) -o $@
 
 obj/%.o: $(DEPSDIR)/*/%.c | obj
-	$(CC) $< -c $(CFLAGS) -o $@
+	$(CC) $< -c $(CFLAGS) $(STRICT) -o $@
 
 obj:
 	mkdir -p obj
