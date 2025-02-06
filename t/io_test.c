@@ -4,8 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "libtap/libtap.h"
-#include "libutil.h"
 #include "tests.h"
 
 static void test_read_all_full_file() {
@@ -19,12 +17,12 @@ static void test_read_all_full_file() {
   size_t sz = sizeof(data);
   io_read_all_result ret = io_read_all(fd, &data, &sz);
 
-  ok(IO_READ_ALL_OK == ret, "returns IO_READ_ALL_OK on successful read");
-  ok(sz == 68241, "reads the correct number of bytes");
-  is("The Colour Out of Space\n", s_substr(data, 0, 23, true),
-     "first chars match");
-  is("troubling my sleep.\n", s_substr(data, 68221, 68241, true),
-     "last chars match");
+  eq_num(IO_READ_ALL_OK, ret, "returns IO_READ_ALL_OK on successful read");
+  eq_num(sz, 68241, "reads the correct number of bytes");
+  eq_str("The Colour Out of Space\n", s_substr(data, 0, 23, true),
+         "first chars match");
+  eq_str("troubling my sleep.\n", s_substr(data, 68221, 68241, true),
+         "last chars match");
 
   fclose(fd);
   free(data);
@@ -51,12 +49,12 @@ static void test_write_all_full_file(void) {
   }
 
   size_t n_written = 0;
-  ok(IO_WRITE_ALL_OK == io_write_all(fd, data, &n_written),
-     "returns IO_WRITE_ALL_OK on successful write");
-  is("The Colour Out of Space\n", s_substr(data, 0, 23, true),
-     "first chars match");
-  is("troubling my sleep.\n", s_substr(data, 68221, 68241, true),
-     "last chars match");
+  eq_num(IO_WRITE_ALL_OK, io_write_all(fd, data, &n_written),
+         "returns IO_WRITE_ALL_OK on successful write");
+  eq_str("The Colour Out of Space\n", s_substr(data, 0, 23, true),
+         "first chars match");
+  eq_str("troubling my sleep.\n", s_substr(data, 68221, 68241, true),
+         "last chars match");
 
   free(data);
   fclose(fd);
@@ -72,9 +70,9 @@ static void test_write_all_full_file(void) {
   sz = sizeof(data);
   assert(IO_READ_ALL_OK == io_read_all(fd, &data, &sz));
 
-  ok(sz == 68241,
-     "make sure the length is the same and we didn't append NULLs or "
-     "something");
+  eq_num(sz, 68241,
+         "make sure the length is the same and we didn't append NULLs or "
+         "something");
 
   fclose(fd);
   free(data);

@@ -23,7 +23,7 @@ STRICT    := -Wall -Werror -Wextra -Wno-missing-field-initializers \
  -Wmissing-prototypes -Wstrict-prototypes -Wold-style-definition \
  -Wno-unused-parameter -Wno-unused-function -Wno-unused-value \
 
-CFLAGS    := -I$(LINCDIR) -I$(DEPSDIR) -pedantic -Wno-error=incompatible-pointer-types -std=c17
+CFLAGS    := -I$(LINCDIR) -I$(DEPSDIR) -pedantic -Wno-error=incompatible-pointer-types
 LIBS      := -lm
 
 TESTS     := $(wildcard $(TESTDIR)/*.c)
@@ -45,16 +45,16 @@ obj/%.o: $(DEPSDIR)/*/%.c | obj
 obj:
 	@mkdir -p obj
 
-install: $(LINCDIR)/*.h | $(STATIC_TARGET)
+install: $(STATIC_TARGET)
 	$(shell mkdir -p $(INSTALL_DIR)/lib)
 	$(shell mkdir -p $(INSTALL_DIR)/include/$(LIBNAME))
 	$(INSTALL) $(STATIC_TARGET) $(INSTALL_DIR)/lib
-	$(INSTALL) $^ $(INSTALL_DIR)/include/$(LIBNAME)
+	$(INSTALL) $(LINCDIR)/$(LIBNAME).h $(INSTALL_DIR)/include
 	$(INSTALL) $(MANPAGE) $(MAN_DIR)/$(MANPAGE)
 
 uninstall:
 	$(shell rm $(INSTALL_DIR)/lib/$(STATIC_TARGET))
-	$(shell rm -rf $(INSTALL_DIR)/include/$(LIBNAME))
+	$(shell rm $(INSTALL_DIR)/include/$(LIBNAME).h)
 	$(shell rm $(MAN_DIR)/$(MANPAGE))
 
 $(EXAMPLE_TARGET): $(STATIC_TARGET)

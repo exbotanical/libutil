@@ -1,6 +1,6 @@
 {
   "name": "libtap",
-  "version": "0.0.5",
+  "version": "0.0.10",
   "author": "Matthew Zito",
   "repo": "exbotanical/libtap",
   "license": "MIT",
@@ -9,5 +9,8 @@
   "src": ["include/libtap.h", "src/tap.c"],
   "development": {
     "exbotanical/print-assert": "0.0.1"
+  },
+  "dependencies": {
+    "strdup": "0.1.5"
   }
 }

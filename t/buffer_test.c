@@ -1,26 +1,24 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "libtap/libtap.h"
-#include "libutil.h"
 #include "tests.h"
 
 static void test_buffer_init(void) {
   buffer_t *buf = buffer_init(NULL);
 
-  is(((__buffer_t *)buf)->state, NULL,
-     "newly initialized buffer's state is NULL");
-  ok(((__buffer_t *)buf)->len == 0, "newly initialized buffer's length is 0");
+  eq_null(((__buffer_t *)buf)->state, NULL,
+          "newly initialized buffer's state is NULL");
+  eq_num(((__buffer_t *)buf)->len, 0, "newly initialized buffer's length is 0");
 
   buffer_free(buf);
 }
 
 static void test_buffer_size(void) {
   buffer_t *buf = buffer_init(NULL);
-  ok(buffer_size(buf) == 0, "retrieves initial size");
+  eq_num(buffer_size(buf), 0, "retrieves initial size");
 
   buffer_append(buf, "hello");
-  ok(buffer_size(buf) == 5, "retrieves updated size");
+  eq_num(buffer_size(buf), 5, "retrieves updated size");
 
   buffer_free(buf);
 }
@@ -29,10 +27,10 @@ static void test_buffer_state(void) {
   const char *v = "hello";
 
   buffer_t *buf = buffer_init(NULL);
-  is(buffer_state(buf), NULL, "initial state is NULL");
+  eq_null(buffer_state(buf), NULL, "initial state is NULL");
 
   buffer_append(buf, v);
-  is(buffer_state(buf), v, "initial state is %s", v);
+  eq_str(buffer_state(buf), v, "initial state is %s", v);
 
   buffer_free(buf);
 }
@@ -43,10 +41,10 @@ static void test_buffer_init_with_initial(void) {
 
   buffer_t *buf = buffer_init(test_str);
 
-  is(((__buffer_t *)buf)->state, test_str,
-     "newly initialized buffer's state equals %s", test_str);
-  ok(((__buffer_t *)buf)->len == test_str_len,
-     "newly initialized buffer's length is %d", test_str_len);
+  eq_str(((__buffer_t *)buf)->state, test_str,
+         "newly initialized buffer's state equals %s", test_str);
+  eq_num(((__buffer_t *)buf)->len, test_str_len,
+         "newly initialized buffer's length is %d", test_str_len);
 
   buffer_free(buf);
 }
@@ -61,11 +59,11 @@ static void test_buffer_append(void) {
   char *expected =
       "abcdefghijklmnopqrstuvwxyz12345678910abcdefghijklmnopqrstuvwxyz";
 
-  is(((__buffer_t *)buf)->state, expected,
-     "buffer holds all appended characters in order");
+  eq_str(((__buffer_t *)buf)->state, expected,
+         "buffer holds all appended characters in order");
   size_t expected_len = strlen(expected);
-  ok(((__buffer_t *)buf)->len == strlen(expected), "buffer's length is %d",
-     expected_len);
+  eq_num(((__buffer_t *)buf)->len, strlen(expected), "buffer's length is %d",
+         expected_len);
 
   buffer_free(buf);
 }
@@ -79,11 +77,11 @@ static void test_buffer_append_with(void) {
 
   char *expected = "abcdefghij12345abcdefghij";
 
-  ok(strcmp(buffer_state(buf), expected) == 0,
-     "buffer contains all appended characters in order");
+  eq_num(strcmp(buffer_state(buf), expected), 0,
+         "buffer contains all appended characters in order");
   size_t expected_len = strlen(expected);
-  ok(((__buffer_t *)buf)->len == expected_len, "buffer's length is %d",
-     expected_len);
+  eq_num(((__buffer_t *)buf)->len, expected_len, "buffer's length is %d",
+         expected_len);
 
   buffer_free(buf);
 }
@@ -93,11 +91,11 @@ static void test_buffer_concat(void) {
   buffer_t *buf_b = buffer_init("string");
   buffer_t *buf_c = buffer_concat(buf_a, buf_b);
 
-  is(((__buffer_t *)buf_c)->state, "teststring",
-     "concatenates the two buffers' states");
+  eq_str(((__buffer_t *)buf_c)->state, "teststring",
+         "concatenates the two buffers' states");
   size_t expected_len = strlen("teststring");
-  ok(((__buffer_t *)buf_c)->len == expected_len, "buffer's length is %d",
-     expected_len);
+  eq_num(((__buffer_t *)buf_c)->len, expected_len, "buffer's length is %d",
+         expected_len);
 
   buffer_free(buf_a);
   buffer_free(buf_b);
@@ -110,7 +108,7 @@ static void test_buffer_concat_on_null(void) {
 
   buffer_t *buf_c = buffer_concat(buf_a, buf_b);
 
-  is(buf_c, NULL, "returns NULL");
+  eq_null(buf_c, NULL, "returns NULL");
 
   buffer_free(buf_a);
   buffer_free(buf_b);
@@ -131,18 +129,18 @@ static void test_buffer_slice_ok(void) {
 
   char slice[32];
 
-  ok(buffer_slice(buf, 5, 9, slice) == true,
-     "retval is true indicating no errors");
-  is(slice, "world", "returns the expected slice");
+  eq_true(buffer_slice(buf, 5, 9, slice),
+          "retval is true indicating no errors");
+  eq_str(slice, "world", "returns the expected slice");
 }
 
 static void test_buffer_slice_empty_buffer(void) {
   buffer_t *buf = buffer_init("");
 
   char slice[32];
-  ok(buffer_slice(buf, 0, 0, slice) == true,
-     "retval is zero indicating no errors");
-  is(slice, "", "returns the expected slice");
+  eq_true(buffer_slice(buf, 0, 0, slice),
+          "retval is zero indicating no errors");
+  eq_str(slice, "", "returns the expected slice");
 }
 
 static void test_buffer_slice_bad_range(void) {
@@ -150,16 +148,16 @@ static void test_buffer_slice_bad_range(void) {
 
   char slice[32];
   // No segfault from this proves the function fast-fails
-  ok(buffer_slice(buf, 5, 32, NULL) == false,
-     "retval is false indicating a bad range");
+  eq_false(buffer_slice(buf, 5, 32, NULL),
+           "retval is false indicating a bad range");
 }
 
 static void test_buffer_slice_null_buffer(void) {
   buffer_t *buf = buffer_init(NULL);
 
   char slice[32];
-  ok(buffer_slice(buf, 0, 0, NULL) == false,
-     "retval is false indicating a NULL internal state");
+  eq_false(buffer_slice(buf, 0, 0, NULL),
+           "retval is false indicating a NULL internal state");
 }
 
 void run_buffer_tests(void) {

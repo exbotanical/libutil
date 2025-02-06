@@ -402,6 +402,50 @@ io_read_all_result io_read_all(FILE *fd, char **data_ptr, size_t *n_read_ptr);
 io_write_all_result io_write_all(FILE *fd, const char *data,
                                  size_t *n_write_ptr);
 
+/**
+ * Checks if the file is a pointer to a relative directory reference i.e. is it
+ * '.' or '..'.
+ *
+ * @param filepath
+ */
+bool file_is_pointer(const char *filepath);
+
+/**
+ * Checks whether the file exists.
+ *
+ * @param filepath
+ */
+bool file_exists(const char *filepath);
+
+/**
+ * Checks whether the file is a symlink
+ *
+ * @param filepath
+ */
+bool file_is_symlink(const char *filepath);
+
+/**
+ * Checks whether the file is executable.
+ *
+ * @param filepath
+ */
+bool file_is_executable(const char *filepath);
+
+/**
+ * Checks whether the file is a directory.
+ *
+ * @param filepath
+ */
+bool file_is_directory(const char *filepath);
+
+/**
+ * Checks whether the file is symlinked to `link`.
+ *
+ * @param filepath
+ * @param link
+ */
+bool file_is_symlinked_to(const char *filepath, const char *link);
+
 #ifdef __cplusplus
 }
 #endif
